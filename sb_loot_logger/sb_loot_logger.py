@@ -89,7 +89,6 @@ class Plugin(PluginBase):
                         logging.info("Finished writing to Loot file")
                 self.new_subworld = True
                 self.is_home = False
-                
 
             for obj in util.worldobjects(cw.mySubWorld.asNativeSubWorld):
                 if util.getClassName(obj) == "Loot":
@@ -137,7 +136,7 @@ def logLoot(self, obj):
 
     item_info = {}
     item_type = ""
-    item_prop = ffi.cast('struct ItemProperties *', loot)
+    item_prop = loot.itemProps
     item_desc = loot.itemDesc
     
     if DEBUG_MODE:
@@ -172,23 +171,26 @@ def logLoot(self, obj):
     elif item_desc.slot == SLOT_BODY:
         item_type = "Body"
 
-    boosts = []
-    stat_boosts = reFieldToList(item_prop.statboosts, 'struct StatBoost *')
+    if item_prop.statboosts != ffi.NULL and item_desc.slot != MISC: 
+        for boost in reFieldToList(item_prop.statboosts, 'struct StatBoost *'):
+            if DEBUG_MODE:
+                logging.info("StatBoost")
+                logging.info(boost)
+                logging.info(" - stat: " + str(boost.stat))
+                logging.info(" - val: " + str(boost.val))
+                logging.info(" - level: " + str(boost.level))
+                try:
+                    logging.info(" - increment:" + str(boost.increment))
+                except Exception:
+                    logging.info(" - increment:" + str(0))
+                logging.info(" - subtypestr:" + util.getstr(boost.subtypestr))
+                logging.info(" - subtype:" + str(boost.subtype))
+                logging.info(" - _has_bits:" + str(boost._has_bits))
+                logging.info("----")
+    else:
+        logging.info("StatBoost")
+        logging.info("----")
 
-    for boost in stat_boosts:
-        if DEBUG_MODE:
-            logging.info("StatBoost")
-            logging.info(" - stat: " + str(boost.stat))
-            logging.info(" - val: " + str(boost.val))
-            logging.info(" - level: " + str(boost.level))
-            try:
-                logging.info(" - increment:" + str(boost.increment))
-            except Exception:
-                logging.info(" - increment:" + str(0))
-            logging.info(" - subtypestr:" + util.getstr(boost.subtypestr))
-            logging.info(" - subtype:" + str(boost.subtype))
-            logging.info(" - _has_bits:" + str(boost._has_bits))
-            logging.info("----")
 
 def writeToDebugFile(test_string): 
         with open(DEBUG_FILE_LOGPATH, 'a') as file:
