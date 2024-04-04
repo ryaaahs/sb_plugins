@@ -239,7 +239,10 @@ def logLoot(self, obj, class_name):
                 self.player_dropped_items_ids.append(obj.objId)
 
 def logFloorLoot(self, floor, zone):
-    if (zone not in IGNORED_ZONE and self.current_floor != floor) or self.is_recalled:
+    # First case catches changing floors
+    # Second case catches exiting on boss room
+    # Third case catches leaves early (Floor 0 exit or homing back)
+    if (zone not in IGNORED_ZONE and self.current_floor != floor) or (zone in IGNORED_ZONE and not self.is_home) or self.is_recalled:
         logging.info("Floor Change!")
 
         log_data = {
