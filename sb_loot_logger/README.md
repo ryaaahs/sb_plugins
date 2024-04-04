@@ -4,7 +4,7 @@ Credits: Alexrns
 Plugin to log all non-player loot from within Starbreak subworlds.  
 This works by iterating through all the game objects and logging the Loot objects as you progress throughout the   map.  
 
-![Loot State Diagram](image.png)
+![Loot State Diagram](loot_state_diagram.png)
 
 Loot logging is done in two steps:  
 Subworld Floors  
