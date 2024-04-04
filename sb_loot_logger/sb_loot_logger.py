@@ -21,21 +21,14 @@ DEBUG_LOGPATH = SB_LOOT_LOGGER_FOLDER + '\\debug.txt'
 ITEMS_JSON = SB_LOOT_LOGGER_FOLDER + '\\items.json'
 
 DEBUG_MODE = True
+
+#TODO Missing IMPLANT
 MISC = 0
 SLOT_MAIN = 256
 SLOT_SECOND = 512
 SLOT_SPECIAL = 768
 SLOT_MOBILITY = 1280
 SLOT_BODY = 1024
-
-# List of mid_boss floors
-# TODO Look into a dynamic way of figuring out mid bosses.
-MID_BOSS = {
-    'forest': 4,
-    'forestHard': 4,
-    'ice': 3,
-    'iceHard': 3
-}
 
 # Zones that we're ignoring
 IGNORED_ZONE = (
@@ -103,6 +96,8 @@ class Plugin(PluginBase):
         floor = cwprops.floor;
         
         # Log floor loot
+        # logging.info(zone)
+        #logging.info(self.current_zone)
         logFloorLoot(self, floor, zone)
 
         # If we're not in the ignored zones 
@@ -151,7 +146,7 @@ class Plugin(PluginBase):
                 
                 log_data = {
                     "date": time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()), 
-                    "location": logMidBossZoneString(self.current_zone, self.current_floor),
+                    "location": self.current_zone,
                     "subworld_loot": self.current_subworld_looted_items,
                 }
 
@@ -168,7 +163,6 @@ class Plugin(PluginBase):
                 self.subworld_item_ids = []
                 self.player_dropped_items_ids = []
 
-                self.current_zone = zone
                 self.is_home = True
                 self.new_subworld = False
                 self.is_recalled = False
@@ -247,7 +241,7 @@ def logFloorLoot(self, floor, zone):
 
         log_data = {
             "date": time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()), 
-            "location": logMidBossZoneString(self.current_zone, self.current_floor),
+            "location": self.current_zone,
             "floor": self.current_floor,
             "floor_loot": self.current_floor_looted_items
         }
@@ -260,6 +254,7 @@ def logFloorLoot(self, floor, zone):
                     logging.info("Finished writing to Loot file")
 
         self.current_floor = floor
+        self.current_zone = zone
 
         self.current_subworld_looted_items.append(log_data)
 
@@ -347,14 +342,3 @@ def reFieldToList(rf, itemtype=None):
         for e in range(len(lst)):
             lst[e] = ffi.cast(itemtype, lst[e])
     return lst
-
-def logMidBossZoneString(current_zone, current_floor): 
-    zone_string = current_zone
-    
-    if (current_zone in MID_BOSS and MID_BOSS[current_zone] == current_floor):
-        zone_string += "_mid_boss"
-    else: 
-        # If we don't have it, return the original string
-        return current_zone
-
-    return zone_string;
