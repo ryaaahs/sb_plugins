@@ -96,8 +96,6 @@ class Plugin(PluginBase):
         floor = cwprops.floor;
         
         # Log floor loot
-        # logging.info(zone)
-        #logging.info(self.current_zone)
         logFloorLoot(self, floor, zone)
 
         # If we're not in the ignored zones 
@@ -121,6 +119,7 @@ class Plugin(PluginBase):
                 self.current_floor = floor 
                 self.current_zone = zone
 
+            # Iterate through all the game objects and search for Loot or Chest objs
             for obj in util.worldobjects(client_world.mySubWorld.asNativeSubWorld):
                 if util.getClassName(obj) == "Loot" or util.getClassName(obj) == "Chest":
                     logLoot(self, obj, util.getClassName(obj))
@@ -167,7 +166,12 @@ class Plugin(PluginBase):
                 self.new_subworld = False
                 self.is_recalled = False
 
+
 def logLoot(self, obj, class_name):
+    """
+    Logs Loot items within the subworld either coming from enemies or chests.
+    This function ignores any items dropped from the player
+    """
     client_world = self.refs.ClientWorld
     item_info = {}
     
@@ -233,6 +237,11 @@ def logLoot(self, obj, class_name):
                 self.player_dropped_items_ids.append(obj.objId)
 
 def logFloorLoot(self, floor, zone):
+    """
+    Logs all the loot collected from logLoot and stores it within the floor_log file 
+    This cleans any variables needed for the next floor of loot
+    """
+
     # First case catches changing floors
     # Second case catches exiting on boss room
     # Third case catches leaves early (Floor 0 exit or homing back)
@@ -263,6 +272,10 @@ def logFloorLoot(self, floor, zone):
         self.current_floor_chests_ids = []
 
 def lootDebugDisplay(obj):
+    """
+    Helper function used to display struct information of important C++ objects used within this plugin
+    """
+
     logging.info("New Loot Found!")
             
     loot = ffi.cast('struct Loot *', obj)
@@ -315,6 +328,10 @@ def writeToDebugFile(test_string):
                 logging.info("Finished writing to Debug file")
 
 def slotType(slot_value):
+    """
+    Helper function used to convert slot ints into readable strings
+    """
+
     # If slot is zero, we know that the drop is a miscellaneous item
     if slot_value == MISC: 
         return "Miscellaneous"
@@ -332,8 +349,10 @@ def slotType(slot_value):
     return ""
 
 def reFieldToList(rf, itemtype=None):
-    '''struct RepeatedField_int -> list
-    struct RepeatedPtrField works too if there is a single struct to cast on all elements'''
+    '''
+    struct RepeatedField_int -> list
+    struct RepeatedPtrField works too if there is a single struct to cast on all elements
+    '''
 
     if rf.elements == ffi.NULL:
         return []
