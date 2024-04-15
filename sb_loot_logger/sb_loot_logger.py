@@ -5,7 +5,9 @@ import time
 import json
 import ctypes
 import time
+import math
 
+from enum import Enum
 from _remote import ffi, lib
 from manager import PluginBase
 
@@ -20,15 +22,24 @@ DEBUG_LOGPATH = SB_LOOT_LOGGER_FOLDER + '\\debug.txt'
 
 ITEMS_JSON = SB_LOOT_LOGGER_FOLDER + '\\items.json'
 
-DEBUG_MODE = True
+DEBUG_MODE = False
 
 #TODO Missing IMPLANT
-MISC = 0
-SLOT_MAIN = 256
-SLOT_SECOND = 512
-SLOT_SPECIAL = 768
-SLOT_MOBILITY = 1280
-SLOT_BODY = 1024
+class ITEM_TYPES(Enum):
+    MISC = 0
+    SLOT_MAIN = 256
+    SLOT_SECOND = 512
+    SLOT_SPECIAL = 768
+    SLOT_BODY = 1024
+    SLOT_MOBILITY = 1280
+    
+ITEM_MODS = [
+    "",
+    "Modified",
+    "Custom",
+    "Experimental",
+    "Prototype",
+]
 
 # Zones that we're ignoring
 IGNORED_ZONE = (
@@ -51,6 +62,10 @@ class Plugin(PluginBase):
         self.current_floor_chests_ids = []
         self.current_floor_looted_items_ids = []
         self.player_dropped_items_ids = []
+
+        self.item_name_display = []
+
+        self.draw = False
         
         if not os.path.exists(SB_LOOT_LOGGER_FOLDER):
             os.makedirs(SB_LOOT_LOGGER_FOLDER)
@@ -87,9 +102,17 @@ class Plugin(PluginBase):
     
 
     def afterUpdate(self, inputs=None):
+        self.draw = False
+        
         client_world = self.refs.ClientWorld
         world_view = self.refs.WorldView
-        if client_world == ffi.NULL or world_view == ffi.NULL: return
+
+        if client_world == ffi.NULL or world_view == ffi.NULL or client_world.player == ffi.NULL: 
+            return
+
+        ptype = util.getClassName(client_world.player)
+        if ptype not in self.refs.CASTABLE['PlayerCharacter']:
+            return
         
         cwprops = client_world.asWorld.props
         zone = util.getstr(client_world.asWorld.props.zone) or util.getstr(client_world.asWorld.props.music)
@@ -120,9 +143,9 @@ class Plugin(PluginBase):
                 self.current_zone = zone
 
             # Iterate through all the game objects and search for Loot or Chest objs
-            for obj in util.worldobjects(client_world.mySubWorld.asNativeSubWorld):
-                if util.getClassName(obj) == "Loot" or util.getClassName(obj) == "Chest":
-                    logLoot(self, obj, util.getClassName(obj))
+            for game_object in util.worldobjects(client_world.mySubWorld.asNativeSubWorld):
+                if util.getClassName(game_object) == "Loot" or util.getClassName(game_object) == "Chest":
+                    logLoot(self, game_object, util.getClassName(game_object))
         else: 
             # We exited from a subworld and need to cleanup
             if not self.is_home: 
@@ -165,6 +188,31 @@ class Plugin(PluginBase):
                 self.is_home = True
                 self.new_subworld = False
                 self.is_recalled = False
+        
+        self.draw = True
+
+    def onPresent(self):
+        if not self.draw:
+            return
+        
+        cw = self.refs.canvasW_[0]
+        ch = self.refs.canvasH_[0]
+        
+        # Hardcoded values
+        #TODO Make these values scale with screen size and config values defined by the user
+        box_x = cw // 50
+        box_y = (ch // 2) - 200
+        box_h = 415
+        box_w = 300
+
+        # Item Display box
+        self.refs.XDL_FillRect(
+            box_x, box_y, box_w, box_h, 0xA0000000, lib.BLENDMODE_BLEND)
+        
+        # Draw items to the screen
+        if len(self.item_name_display) > 0:
+            for index, element in enumerate(self.item_name_display):
+                element.draw((cw // 50) + 5, ((ch // 2) - 193) + 20 * index)
 
 
 def logLoot(self, obj, class_name):
@@ -214,8 +262,14 @@ def logLoot(self, obj, class_name):
                                     "boosts": boosts_list,
                                 }
 
+                                formatted_time = time.strftime('%H:%M:%S', time.gmtime())
+                                logging_name = ITEM_MODS[len(boosts_list)] + " " + util.getstr(chest_loot.itemDesc.name) if len(boosts_list) > 0 else util.getstr(chest_loot.itemDesc.name)
+
+                                addItemToLoggingDisplay(self, "[" + formatted_time + "] " + logging_name)
+
                                 self.current_floor_looted_items.append(looted_item)
                                 self.current_floor_looted_items_ids.append(loot_obj.objId)
+
                 self.current_floor_chests_ids.append(obj.objId)       
         elif slotType(loot.itemDesc.slot) == "Miscellaneous":
 
@@ -226,6 +280,9 @@ def logLoot(self, obj, class_name):
                 "slot": loot.itemDesc.slot,
                 "boosts": [],
             }
+            
+            formatted_time = time.strftime('%H:%M:%S', time.gmtime())
+            addItemToLoggingDisplay(self, "[" + formatted_time + "] " + util.getstr(loot.itemDesc.name))
 
             self.current_floor_looted_items.append(looted_item)
             self.current_floor_looted_items_ids.append(obj.objId)
@@ -301,7 +358,7 @@ def lootDebugDisplay(obj):
         logging.info(" - itemsubclass:" + str(item_desc.itemsubclass))
         logging.info(" - slot:" + str(item_desc.slot))
 
-        if item_prop.statboosts != ffi.NULL and item_desc.slot != MISC: 
+        if item_prop.statboosts != ffi.NULL and item_desc.slot != ITEM_TYPES.MISC.value: 
             for boost in reFieldToList(item_prop.statboosts, 'struct StatBoost *'):
                 if DEBUG_MODE:
                     logging.info("StatBoost")
@@ -333,17 +390,17 @@ def slotType(slot_value):
     """
 
     # If slot is zero, we know that the drop is a miscellaneous item
-    if slot_value == MISC: 
+    if slot_value == ITEM_TYPES.MISC.value: 
         return "Miscellaneous"
-    elif slot_value == SLOT_MAIN:
+    elif slot_value == ITEM_TYPES.SLOT_MAIN.value:
         return "Main"
-    elif slot_value == SLOT_SECOND:
+    elif slot_value == ITEM_TYPES.SLOT_SECOND.value:
         return "Second"
-    elif slot_value == SLOT_SPECIAL:
+    elif slot_value == ITEM_TYPES.SLOT_SPECIAL.value:
         return "Special"
-    elif slot_value == SLOT_MOBILITY:
+    elif slot_value == ITEM_TYPES.SLOT_MOBILITY.value:
         return "Mobility"
-    elif slot_value == SLOT_BODY:
+    elif slot_value == ITEM_TYPES.SLOT_BODY.value:
         return "Body"
     
     return ""
@@ -361,3 +418,15 @@ def reFieldToList(rf, itemtype=None):
         for e in range(len(lst)):
             lst[e] = ffi.cast(itemtype, lst[e])
     return lst
+
+def addItemToLoggingDisplay(self, name):
+
+    if len(self.item_name_display) > 19:
+        # Shift the array over by one
+        self.item_name_display = self.item_name_display[1:]
+
+    item = util.PlainText(font='HemiHeadBold')
+    item.size = 12
+    item.text = name
+
+    self.item_name_display.append(item)
