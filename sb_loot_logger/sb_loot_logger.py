@@ -311,7 +311,8 @@ def logFloorLoot(self, floor, zone):
     # Second case catches exiting on boss room
     # Third case catches leaves early (Floor 0 exit or homing back)
     if (zone not in IGNORED_ZONE and self.current_floor != floor) or (zone in IGNORED_ZONE and not self.is_home) or self.is_recalled:
-        logging.info("Floor Change!")
+        if DEBUG_MODE:
+            logging.info("Floor Change!")
 
         log_data = {
             "date": time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()), 
@@ -368,20 +369,19 @@ def lootDebugDisplay(obj):
 
         if item_prop.statboosts != ffi.NULL and item_desc.slot != ITEM_TYPES.MISC.value: 
             for boost in reFieldToList(item_prop.statboosts, 'struct StatBoost *'):
-                if DEBUG_MODE:
-                    logging.info("StatBoost")
-                    logging.info(boost)
-                    logging.info(" - stat: " + str(boost.stat))
-                    logging.info(" - val: " + str(boost.val))
-                    logging.info(" - level: " + str(boost.level))
-                    try:
-                        logging.info(" - increment:" + str(boost.increment))
-                    except Exception:
-                        logging.info(" - increment:" + str(0))
-                    logging.info(" - subtypestr:" + util.getstr(boost.subtypestr))
-                    logging.info(" - subtype:" + str(boost.subtype))
-                    logging.info(" - _has_bits:" + str(boost._has_bits))
-                    logging.info("----")
+                logging.info("StatBoost")
+                logging.info(boost)
+                logging.info(" - stat: " + str(boost.stat))
+                logging.info(" - val: " + str(boost.val))
+                logging.info(" - level: " + str(boost.level))
+                try:
+                    logging.info(" - increment:" + str(boost.increment))
+                except Exception:
+                    logging.info(" - increment:" + str(0))
+                logging.info(" - subtypestr:" + util.getstr(boost.subtypestr))
+                logging.info(" - subtype:" + str(boost.subtype))
+                logging.info(" - _has_bits:" + str(boost._has_bits))
+                logging.info("----")
         else:
             logging.info("StatBoost")
             logging.info("----")
