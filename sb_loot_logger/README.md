@@ -3,7 +3,7 @@ Credits: Alexrns
 
 Plugin to log all non-player loot from within Starbreak subworlds.  
 
-The plugin offers to two different modes to log/view loot information:
+The plugin offers to two different modes to log/view loot information:  
 A stack-based GUI display that renders x amount of items to the screen gotten within the subworld.  
 Log file that contains all loot from within a subworld that can be easily parsed.  
 
