@@ -41,6 +41,16 @@ ITEM_MODS = [
     "Prototype",
 ]
 
+SCREEN_WIDTH = {
+    1024: 4,
+    1280: 5,
+    1366: 5,
+    1600: 6,
+    1920: 6,
+    2520: 8,
+    2560: 8,
+}
+
 # Zones that we're ignoring
 IGNORED_ZONE = (
     'home',
@@ -64,6 +74,17 @@ class Plugin(PluginBase):
         self.player_dropped_items_ids = []
 
         self.item_name_display = []
+
+        # Set config options 
+        self.config.options('int', {
+            'sll_display_size': 20,
+            'sll_box_height': 400,
+            'sll_box_width': 350,
+            'sll_display_x': 100,
+            'sll_display_y': 340
+        })
+
+        self.config.option('sll_display_box', False, 'bool')
 
         self.draw = False
         
@@ -192,27 +213,28 @@ class Plugin(PluginBase):
         self.draw = True
 
     def onPresent(self):
-        if not self.draw:
+        if not self.draw or not self.config.sll_display_box:
             return
         
-        cw = self.refs.canvasW_[0]
-        ch = self.refs.canvasH_[0]
+        canvas_width = self.refs.canvasW_[0]
+        canvas_height = self.refs.canvasH_[0]
         
+        box_height = self.config.sll_box_height
+        box_width = self.config.sll_box_width
+
         # Hardcoded values
         #TODO Make these values scale with screen size and config values defined by the user
-        box_x = cw // 50
-        box_y = (ch // 2) - 200
-        box_h = 415
-        box_w = 300
+        box_x = self.config.sll_display_x
+        box_y = self.config.sll_display_y
 
         # Item Display box
         self.refs.XDL_FillRect(
-            box_x, box_y, box_w, box_h, 0xA0000000, lib.BLENDMODE_BLEND)
+            box_x, box_y, box_width, box_height, 0xA0000000, lib.BLENDMODE_BLEND)
         
         # Draw items to the screen
         if len(self.item_name_display) > 0:
             for index, element in enumerate(self.item_name_display):
-                element.draw((cw // 50) + 5, ((ch // 2) - 193) + 20 * index)
+                element.draw((box_x) + 5, (box_y + 20 * index))
 
 
 def logLoot(self, obj, class_name):
@@ -332,8 +354,8 @@ def lootDebugDisplay(obj):
     """
     Helper function used to display struct information of important C++ objects used within this plugin
     """
-
-    logging.info("New Loot Found!")
+    if DEBUG_MODE:
+        logging.info("New Loot Found!")
             
     loot = ffi.cast('struct Loot *', obj)
     item_prop = loot.itemProps
@@ -420,8 +442,7 @@ def reFieldToList(rf, itemtype=None):
     return lst
 
 def addItemToLoggingDisplay(self, name):
-
-    if len(self.item_name_display) > 19:
+    if len(self.item_name_display) > self.config.sll_display_size - 1:
         # Shift the array over by one
         self.item_name_display = self.item_name_display[1:]
 
