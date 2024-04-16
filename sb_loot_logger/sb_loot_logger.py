@@ -41,16 +41,6 @@ ITEM_MODS = [
     "Prototype",
 ]
 
-SCREEN_WIDTH = {
-    1024: 4,
-    1280: 5,
-    1366: 5,
-    1600: 6,
-    1920: 6,
-    2520: 8,
-    2560: 8,
-}
-
 # Zones that we're ignoring
 IGNORED_ZONE = (
     'home',
@@ -129,10 +119,6 @@ class Plugin(PluginBase):
         world_view = self.refs.WorldView
 
         if client_world == ffi.NULL or world_view == ffi.NULL or client_world.player == ffi.NULL: 
-            return
-
-        ptype = util.getClassName(client_world.player)
-        if ptype not in self.refs.CASTABLE['PlayerCharacter']:
             return
         
         cwprops = client_world.asWorld.props
