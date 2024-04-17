@@ -27,7 +27,8 @@ and condense them into a array that you can iterate and manipulate to your exten
 The overall goal with this plugin was to get an understanding of SBPE to make other plugins
 
 Future Possible Features:  
-Slot filtering  (Log / GUI)
-Item filtering  (Log / GUI)
-Boost filtering (Log / GUI)
-Logging Players when a specific item(s) drops
+Slot filtering  (Log / GUI)  
+Item filtering  (Log / GUI)  
+Boost filtering (Log / GUI)  
+Logging Players when a specific item(s) drops  
+Colour change on items with specific mods / amount of boosts (White, Blue, Purple, Yellow/Red)  
