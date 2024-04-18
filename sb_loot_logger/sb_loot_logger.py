@@ -65,6 +65,8 @@ class Plugin(PluginBase):
 
         self.item_name_display = []
 
+        self.do_not_display_group = {}
+        
         # Set config options 
         self.config.options('int', {
             'sll_display_size': 20,
@@ -74,8 +76,31 @@ class Plugin(PluginBase):
             'sll_display_y': 340
         })
 
-        self.config.option('sll_display_box', False, 'bool')
+        self.config.options('color', {
+            'sll_modified_colour': 0xff79f071,
+            'sll_custom_colour': 0xff3d70f0,
+            'sll_experimental_colour': 0xffd04ef0,
+            'sll_prototype_colour': 0xfff0b03d,
+        })
 
+        self.config.options('bool', {
+            'sll_display_box': False,
+            'sll_log_misc_items': False,
+            'sll_log_main_items': False,
+            'sll_log_second_items': False,
+            'sll_log_special_items': False,
+            'sll_log_mobility_items': False,
+            'sll_log_body_items': False,
+            'sll_log_implant_items': False,
+        })
+
+        self.do_not_display_group["Main"] = self.config.sll_log_main_items
+        self.do_not_display_group["Second"] = self.config.sll_log_second_items
+        self.do_not_display_group["Special"] = self.config.sll_log_special_items
+        self.do_not_display_group["Mobility"] = self.config.sll_log_mobility_items
+        self.do_not_display_group["Body"] = self.config.sll_log_body_items
+        self.do_not_display_group["Implant"] = self.config.sll_log_implant_items
+    
         self.draw = False
         
         if not os.path.exists(SB_LOOT_LOGGER_FOLDER):
@@ -271,9 +296,14 @@ def logLoot(self, obj, class_name):
                                 }
 
                                 formatted_time = time.strftime('%H:%M:%S', time.gmtime())
-                                logging_name = ITEM_MODS[len(boosts_list)] + " " + util.getstr(chest_loot.itemDesc.name) if len(boosts_list) > 0 else util.getstr(chest_loot.itemDesc.name)
 
-                                addItemToLoggingDisplay(self, "[" + formatted_time + "] " + logging_name)
+                                if slotType(chest_loot.itemDesc.slot) == "Miscellaneous" and self.config.sll_log_misc_items:
+                                    addItemToLoggingDisplay(self, "[" + formatted_time + "] " + util.getstr(loot.itemDesc.name), -1)
+
+                                elif slotType(chest_loot.itemDesc.slot) != "Miscellaneous" and self.do_not_display_group[slotType(chest_loot.itemDesc.slot)]:
+
+                                    logging_name = ITEM_MODS[len(boosts_list)] + " " + util.getstr(chest_loot.itemDesc.name) if len(boosts_list) > 0 else util.getstr(chest_loot.itemDesc.name)
+                                    addItemToLoggingDisplay(self, "[" + formatted_time + "] " + logging_name, len(boosts_list))
 
                                 self.current_floor_looted_items.append(looted_item)
                                 self.current_floor_looted_items_ids.append(loot_obj.objId)
@@ -289,8 +319,9 @@ def logLoot(self, obj, class_name):
                 "boosts": [],
             }
             
-            formatted_time = time.strftime('%H:%M:%S', time.gmtime())
-            addItemToLoggingDisplay(self, "[" + formatted_time + "] " + util.getstr(loot.itemDesc.name))
+            if (self.config.sll_log_misc_items):
+                formatted_time = time.strftime('%H:%M:%S', time.gmtime())
+                addItemToLoggingDisplay(self, "[" + formatted_time + "] " + util.getstr(loot.itemDesc.name), -1)
 
             self.current_floor_looted_items.append(looted_item)
             self.current_floor_looted_items_ids.append(obj.objId)
@@ -427,7 +458,7 @@ def reFieldToList(rf, itemtype=None):
             lst[e] = ffi.cast(itemtype, lst[e])
     return lst
 
-def addItemToLoggingDisplay(self, name):
+def addItemToLoggingDisplay(self, name, boost_length):
     if len(self.item_name_display) > self.config.sll_display_size - 1:
         # Shift the array over by one
         self.item_name_display = self.item_name_display[1:]
@@ -435,5 +466,14 @@ def addItemToLoggingDisplay(self, name):
     item = util.PlainText(font='HemiHeadBold')
     item.size = 12
     item.text = name
+    if boost_length != -1:
+        if boost_length == 1:
+            item.color = self.config.sll_modified_colour
+        if boost_length == 2:
+            item.color = self.config.sll_custom_colour
+        if boost_length == 3:
+            item.color = self.config.sll_experimental_colour
+        if boost_length == 4:
+            item.color = self.config.sll_prototype_colour
 
     self.item_name_display.append(item)
