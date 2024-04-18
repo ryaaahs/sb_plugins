@@ -11,6 +11,14 @@ from enum import Enum
 from _remote import ffi, lib
 from manager import PluginBase
 
+# Place items in here that you don't want logged/displayed
+FILTERED_ITEMS = '''
+Kantikoy Repeater
+Talons
+1 EC
+'''.split("\n")
+FILTERED_ITEMS = list(filter(None, FILTERED_ITEMS))
+
 BASEDIR = os.path.split(os.path.dirname(__file__))[0]
 
 SB_LOOT_LOGGER_FOLDER = BASEDIR + '\\sblootlogger'
@@ -297,16 +305,23 @@ def logLoot(self, obj, class_name):
 
                                 formatted_time = time.strftime('%H:%M:%S', time.gmtime())
 
-                                if slotType(chest_loot.itemDesc.slot) == "Miscellaneous" and self.config.sll_log_misc_items:
-                                    addItemToLoggingDisplay(self, "[" + formatted_time + "] " + util.getstr(loot.itemDesc.name), -1)
+                                if not util.getstr(chest_loot.itemDesc.name) in FILTERED_ITEMS:
+                                    
+                                    # Check for MISC filter
+                                    if slotType(chest_loot.itemDesc.slot) == "Miscellaneous" and self.config.sll_log_misc_items:
+                                        addItemToLoggingDisplay(self, "[" + formatted_time + "] " + util.getstr(chest_loot.itemDesc.name), -1)
 
-                                elif slotType(chest_loot.itemDesc.slot) != "Miscellaneous" and self.do_not_display_group[slotType(chest_loot.itemDesc.slot)]:
+                                        self.current_floor_looted_items.append(looted_item)
+                                        self.current_floor_looted_items_ids.append(loot_obj.objId)
 
-                                    logging_name = ITEM_MODS[len(boosts_list)] + " " + util.getstr(chest_loot.itemDesc.name) if len(boosts_list) > 0 else util.getstr(chest_loot.itemDesc.name)
-                                    addItemToLoggingDisplay(self, "[" + formatted_time + "] " + logging_name, len(boosts_list))
+                                    # Check for any other filter
+                                    elif slotType(chest_loot.itemDesc.slot) != "Miscellaneous" and self.do_not_display_group[slotType(chest_loot.itemDesc.slot)]:
 
-                                self.current_floor_looted_items.append(looted_item)
-                                self.current_floor_looted_items_ids.append(loot_obj.objId)
+                                        logging_name = ITEM_MODS[len(boosts_list)] + " " + util.getstr(chest_loot.itemDesc.name) if len(boosts_list) > 0 else util.getstr(chest_loot.itemDesc.name)
+                                        addItemToLoggingDisplay(self, "[" + formatted_time + "] " + logging_name, len(boosts_list))
+
+                                        self.current_floor_looted_items.append(looted_item)
+                                        self.current_floor_looted_items_ids.append(loot_obj.objId)
 
                 self.current_floor_chests_ids.append(obj.objId)       
         elif slotType(loot.itemDesc.slot) == "Miscellaneous":
@@ -319,12 +334,12 @@ def logLoot(self, obj, class_name):
                 "boosts": [],
             }
             
-            if (self.config.sll_log_misc_items):
+            if (self.config.sll_log_misc_items) and (not util.getstr(loot.itemDesc.name) in FILTERED_ITEMS):
                 formatted_time = time.strftime('%H:%M:%S', time.gmtime())
                 addItemToLoggingDisplay(self, "[" + formatted_time + "] " + util.getstr(loot.itemDesc.name), -1)
 
-            self.current_floor_looted_items.append(looted_item)
-            self.current_floor_looted_items_ids.append(obj.objId)
+                self.current_floor_looted_items.append(looted_item)
+                self.current_floor_looted_items_ids.append(obj.objId)
         else:
             # If the item is not part of a chest, it was dropped by a player and we add to the ignore list
             if obj.objId in self.player_dropped_items_ids:
