@@ -1,0 +1,54 @@
+MAIN
+31|Kantikoy Repeater|loot-krepeater
+147|Compound Repeater|loot-repeater2
+148|Redshift Repeater|loot-repeater3
+149|Tektite Repeater|loot-repeater4
+207|Aerolith Repeater|loot-repeater5
+4|Shotgun|loot-shotgun
+5|Arblast|loot-arblast
+150|Dragoon|loot-arblast2
+208|Bombard|loot-arblast3
+209|Jansky Repeater|loot-srepeater2
+108|Soidal Repeater|loot-srepeater
+109|Bolt Thrower|loot-bthrower
+56|Ancient Gun|tutorial.loot-repeater
+65|Ancient Super Gun|tutorial.loot-krepeater
+
+SECOND
+2|Frag|loot-frag
+38|Improved Frag|loot-ifrag
+151|Contrived Frag|loot-frag2
+152|Synthetic Frag|loot-frag3
+153|Reforged Frag|loot-frag4
+210|Unstable Frag|loot-frag5
+39|Cluster|loot-cluster
+40|Swarm Cluster|loot-scluster
+212|Hydra|loot-scluster2
+194|Tripwire|loot-twire
+110|Proxies|loot-proxies
+57|Ancient Grenade|tutorial.loot-frag
+
+SPECIAL
+63|Blast|loot-blast
+69|Empowered Blast|loot-eblast
+154|Withering Blast|loot-blast2
+155|Voracious Blast|loot-blast3
+156|Zealous Blast|loot-blast4
+213|Furious Blast|loot-blast5
+70|Forceful Blast|loot-fblast
+214|Fireform|loot-fblast2
+71|Scattered Blast|loot-sblast
+
+BODY
+14|Jerkin|loot-scoutarmor
+55|Durable Jerkin|loot-brigandine
+247|Augmented Jerkin|loot-wfbody3
+248|Reinforced Jerkin|loot-wfbody4
+249|Resilient Jerkin|loot-wfbody5
+
+MOBILITY
+261|Talons|loot-wfboot1
+262|Durable Talons|loot-wfboot2
+263|Augmented Talons|loot-wfboot3
+264|Reinforced Talons|loot-wfboot4
+265|Resilient Talons|loot-wfboot5

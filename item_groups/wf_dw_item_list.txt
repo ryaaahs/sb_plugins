@@ -1,0 +1,13 @@
+MAIN
+193|Needlebow|loot-nbow
+144|Stonebow|loot-stonebow
+
+BODY
+34|Hyrst|loot-hyrst
+103|Durable Hyrst|loot-wyhyrst
+
+MOBILITY
+15|Trackers|loot-eqboots
+258|Durable Trackers|loot-boots2
+16|Empyreals|loot-emboots
+266|Aeonic Empyreals|loot-emboots2

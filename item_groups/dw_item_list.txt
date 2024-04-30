@@ -1,0 +1,46 @@
+MAIN
+9|Skein|loot-skein
+35|Nacre Skein|loot-nskein
+157|Cobalt Skein|loot-skein2
+158|Sapphire Skein|loot-skein3
+159|Berylblade Skein|loot-skein4
+215|Vitreous Skein|loot-skein5
+46|Polychrome Skein|loot-pskein
+216|Motley|loot-pskein2
+116|Balefire Skein|loot-bskein
+217|Skyfire Skein|loot-bskein2
+117|Baetyl|loot-baetyl
+
+SECOND
+1|Aesc|loot-aesc
+41|Biting Aesc|loot-baesc
+160|Falcate Aesc|loot-aesc2
+161|Keen Aesc|loot-aesc3
+162|Violet Aesc|loot-aesc4
+218|Radiant Aesc|loot-aesc5
+195|Haunting Aesc|loot-haesc
+72|Gnawing Aesc|loot-gaesc
+111|Kulbeda|loot-saes
+219|Kunai|loot-saesc2
+
+SPECIAL
+10|Warp|loot-warp
+42|Acrotic Warp|loot-awarp
+163|Beloid Warp|loot-warp2
+164|Daedal Warp|loot-warp3
+165|Aeon Warp|loot-warp4
+221|Tacent Warp|loot-warp5
+196|Residual Warp|loot-rwarp
+98|Abiding Warp|loot-bwarp
+112|Mirrored Warp|loot-mwarp
+222|Mimic|loot-mwarp2
+
+BODY
+250|Augmented Hyrst|loot-dwbody3
+251|Reinforced Hyrst|loot-dwbody4
+252|Resilient Hyrst|loot-dwbody5
+
+MOBILITY
+184|Augmented Trackers|loot-boots3
+259|Reinforced Trackers|loot-boots4
+260|Resilient Trackers|loot-boots5

@@ -1,0 +1,5 @@
+MOBILITY
+277|Boosters|loot-boosters3
+274|Overloaded Boosters|loot-boosters4
+105|Gliders|loot-boosters
+106|Volatile Gliders|loot-vboosters

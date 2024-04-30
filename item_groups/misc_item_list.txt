@@ -1,0 +1,93 @@
+18|Health Boost 1|loot-health1
+21|Ammo Boost|loot-ammo
+
+49|1 EC|loot-1ec
+96|5 EC|loot-5ec
+50|10 EC|loot-10ec
+97|25 EC|loot-25ec
+
+291|1 UC|loot-1uc
+292|5 UC|loot-5uc
+51|Implant Slot 1|loot-impslot1
+
+19|Max Health Boost 1|loot-maxhealth1
+20|Max Health Boost 2|loot-maxhealth2
+92|Max Health Boost 3|loot-maxhealth3
+93|Max Health Boost 4|loot-maxhealth4
+236|Max Health Boost 5|loot-maxhealth5
+
+22|Max Ammo Boost 1|loot-maxammo1
+23|Max Ammo Boost 2|loot-maxammo2
+94|Max Ammo Boost 3|loot-maxammo3
+95|Max Ammo Boost 4|loot-maxammo4
+237|Max Ammo Boost 5|loot-maxammo5
+
+120|Armor Boost 1|loot-armor1
+121|Armor Boost 2|loot-armor2
+122|Armor Boost 3|loot-armor3
+123|Armor Boost 4|loot-armor4
+238|Armor Boost 5|loot-armor5
+
+124|Movement Speed Boost 1|loot-mspeed1
+125|Movement Speed Boost 2|loot-mspeed2
+126|Movement Speed Boost 3|loot-mspeed3
+127|Movement Speed Boost 4|loot-mspeed4
+239|Movement Speed Boost 5|loot-mspeed5
+
+128|Jump Height Boost 1|loot-jheight1
+129|Jump Height Boost 2|loot-jheight2
+130|Jump Height Boost 3|loot-jheight3
+131|Jump Height Boost 4|loot-jheight4
+240|Jump Height Boost 5|loot-jheight5
+
+132|Damage Boost 1|loot-damage1
+133|Damage Boost 2|loot-damage2
+134|Damage Boost 3|loot-damage3
+135|Damage Boost 4|loot-damage4
+241|Damage Boost 5|loot-damage5
+
+136|Crit Chance Boost 1|loot-critchance1
+137|Crit Chance Boost 2|loot-critchance2
+138|Crit Chance Boost 3|loot-critchance3
+139|Crit Chance Boost 4|loot-critchance4
+242|Crit Chance Boost 5|loot-critchance5
+
+140|Crit Damage Boost 1|loot-critmult1
+141|Crit Damage Boost 2|loot-critmult2
+142|Crit Damage Boost 3|loot-critmult3
+143|Crit Damage Boost 4|loot-critmult4
+243|Crit Damage Boost 5|loot-critmult5
+
+
+99|Fungus Cave Key|loot-cavekey
+201|Vanquished Key|loot-citykey
+100|Underground Base Key|loot-dumbkey
+107|Strands Key|loot-junglekey
+101|Graveyard Key|loot-hulkkey
+145|Temple of the Lost Key|loot-labkey
+205|Unknown Key|loot-unknownkey
+206|Mysterious Key|loot-mysteriouskey
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

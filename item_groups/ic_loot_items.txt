@@ -1,0 +1,49 @@
+MAIN
+6|Sledge|loot-sledge
+36|Cruel Sledge|loot-csledge
+166|Vengeful Sledge|loot-sledge2
+167|Sinful Sledge|loot-sledge3
+168|Baleful Sledge|loot-sledge4
+223|Corrupt Sledge|loot-sledge5
+197|Lancet|loot-lancet
+119|Baculus|loot-baculus
+47|Adjudicator|loot-adjudicator
+224|Quaestor|loot-adjudicator2
+118|Preceptor|loot-preceptor
+
+SECOND
+7|Kyeser|loot-kyeser
+44|Irascent Kyeser|loot-ikyeser
+169|Caustic Kyeser|loot-kyeser2
+170|Insidious Kyeser|loot-kyeser3
+171|Nefarious Kyeser|loot-kyeser4
+226|Diabolical Kyeser|loot-kyeser5
+198|Hotfoot|loot-hfoot
+115|Burner|loot-burner
+45|Swarmer|loot-swarmer
+312|Triad|loot-swarmer3
+227|Locust|loot-swarmer2
+
+SPECIAL
+11|Mantlet|loot-mantlet
+32|Relentless Mantlet|loot-rmantlet
+172|Fortified Mantlet|loot-mantlet2
+173|Banded Mantlet|loot-mantlet3
+174|Annealed Mantlet|loot-mantlet4
+228|Eternal Mantlet|loot-mantlet5
+
+BODY
+33|Plating|loot-plating
+102|Durable Plating|loot-aplating
+244|Augmented Plating|loot-icbody3
+245|Reinforced Plating|loot-icbody4
+246|Resilient Plating|loot-icbody5
+
+MOBILITY
+43|Sabatons|loot-sabatons
+267|Durable Sabatons|loot-sabatons2
+185|Augmented Sabatons|loot-sabatons3
+268|Reinforced Sabatons|loot-sabatons4
+269|Resilient Sabatons|loot-sabatons5
+187|Stompers|loot-stompers
+270|Spiked Stompers|loot-stompers2

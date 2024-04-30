@@ -1,0 +1,53 @@
+MAIN
+53|Dancer|loot-dancer
+58|Deepfire Dancer|loot-ddancer
+175|Everdawn Dancer|loot-dancer2
+176|Fellwhip Dancer|loot-dancer3
+177|Darkstar Dancer|loot-dancer4
+229|Direfall Dancer|loot-dancer5
+199|Telson|loot-telson
+113|Gavotte|loot-gavotte
+66|Trinity|loot-trinity
+230|Volta|loot-trinity2
+114|Quickstep|loot-quickstep
+
+SECOND
+54|Antiphon|loot-antiphon
+59|Defiant Antiphon|loot-dantiphon
+178|Invidious Antiphon|loot-antiphon2
+179|Mocking Antiphon|loot-antiphon3
+180|Profane Antiphon|loot-antiphon4
+232|Blasphemous Antiphon|loot-antiphon5
+200|Mangonel|loot-mangonel
+233|Scorpion|loot-mangonel2
+67|Whispered Antiphon|loot-wantiphon
+311|Silent Antiphon|loot-wantiphon2
+
+SPECIAL
+12|Macron|loot-macron
+48|Protracted Macron|loot-pmacron
+181|Recalcitant Macron|loot-macron2
+182|Inveterate Macron|loot-macron3
+183|Composite Macron|loot-macron4
+234|Devoted Macron|loot-macron5
+68|Mechanized Macron|loot-mmacron
+235|Skiff|loot-mmacron2
+305|Blink|loot-blink
+
+BODY
+60|Woven|loot-woven
+104|Durable Woven|loot-iwoven
+253|Augmented Woven|loot-fbody3
+254|Reinforced Woven|loot-fbody4
+255|Resilient Woven|loot-fbody5
+191|Blockers|loot-blockers
+192|Enraged Blockers|loot-eblockers
+257|Enlarged Blockers|loot-blockers2
+
+MOBILITY
+61|Valenki|loot-valenki
+271|Durable Valenki|loot-valenki2
+186|Augmented Valenki|loot-valenki3
+272|Reinforced Valenki|loot-valenki4
+273|Resilient Valenki|loot-valenki5
+146|Lightfoot|loot-lightfoot

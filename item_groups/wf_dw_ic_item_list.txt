@@ -1,0 +1,5 @@
+BODY
+188|Bandolier|loot-band
+189|Double Bandolier|loot-dband
+190|Berserker|loot-berserker
+256|Frenzied Berserker|loot-berserker2
