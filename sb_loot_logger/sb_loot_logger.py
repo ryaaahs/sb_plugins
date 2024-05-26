@@ -30,7 +30,7 @@ DEBUG_LOGPATH = SB_LOOT_LOGGER_FOLDER + '\\debug.txt'
 
 ITEMS_JSON = SB_LOOT_LOGGER_FOLDER + '\\items.json'
 
-DEBUG_MODE = False
+DEBUG_MODE = True
 
 #TODO Missing IMPLANT
 class ITEM_TYPES(Enum):
@@ -268,7 +268,8 @@ def logLoot(self, obj, class_name):
         return
     else:
         if (class_name == "Loot"):
-            lootDebugDisplay(obj)
+            if (not util.getstr(loot.itemDesc.name) in FILTERED_ITEMS):
+                lootDebugDisplay(obj)
             loot = ffi.cast('struct Loot *', obj)
 
         # We need to confirm if the other types of Loot are dropped from a chest
