@@ -268,9 +268,9 @@ def logLoot(self, obj, class_name):
         return
     else:
         if (class_name == "Loot"):
+            loot = ffi.cast('struct Loot *', obj)
             if (not util.getstr(loot.itemDesc.name) in FILTERED_ITEMS):
                 lootDebugDisplay(obj)
-            loot = ffi.cast('struct Loot *', obj)
 
         # We need to confirm if the other types of Loot are dropped from a chest
         if class_name == "Chest":
@@ -283,6 +283,10 @@ def logLoot(self, obj, class_name):
                         # Catch any ids that made it in already (Mostly misc)
                         if util.getClassName(loot_obj) == "Loot" and loot_obj.objId not in self.current_floor_looted_items_ids:
                             chest_loot = ffi.cast('struct Loot *', loot_obj)
+                            
+                            if (not util.getstr(chest_loot.itemDesc.name) in FILTERED_ITEMS):
+                                lootDebugDisplay(chest_loot)
+
                             # Compare memory addresses to see if they are the same
                             if str(item.classptr) == str(chest_loot.itemProps.classptr):
                                 # We found a match
