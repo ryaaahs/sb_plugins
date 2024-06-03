@@ -61,8 +61,8 @@ if the item doesn't exist and the boost doesn't exists for the item.
 *Here is a diagram giving a visual on how the logic works*
 
  # Usage
-Add the `sb_boost_collector.py` to the plugin folder of your sbpe
-Add the `clean_boost_information.py` to the root folder of sbpe   
+Add the `sb_boost_collector.py` to the plugin folder of your sbpe  
+Add the `clean_boost_information.py` to the root folder of sbpe     
 
-Plugin should now load and create the missing files/directory.
+Plugin should now load and create the missing files/directory on sbpe launch.  
   
