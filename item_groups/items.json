@@ -1,662 +1,663 @@
 [
-	{
-		"id": 31,
-		"name": "Kantikoy Repeater", 
-		"id_name": "loot-krepeater", 
-		"class": "Wildfire", 
-		"slot": "Main",
-	},
-	{
-		"id": 147,
-		"name": "Compound Repeater", 
-		"id_name": "loot-repeater2", 
-		"class": "Wildfire", 
-		"slot": "Main",
-	},
-	{
-		"id": 148,
-		"name": "Redshift Repeater", 
-		"id_name": "loot-repeater3", 
-		"class": "Wildfire", 
-		"slot": "Main",
-	},
-	{
-		"id": 149,
-		"name": "Tektite Repeater", 
-		"id_name": "loot-repeater4", 
-		"class": "Wildfire", 
-		"slot": "Main",
-	},
-	{
-		"id": 207,
-		"name": "Aerolith Repeater", 
-		"id_name": "loot-repeater5", 
-		"class": "Wildfire", 
-		"slot": "Main",
-	},
-	{
-		"id": 4,
-		"name": "Shotgun", 
-		"id_name": "loot-shotgun", 
-		"class": "Wildfire", 
-		"slot": "Main",
-	},
-	{
-		"id": 5,
-		"name": "Arblast", 
-		"id_name": "loot-arblast", 
-		"class": "Wildfire", 
-		"slot": "Main",
-	},
-	{
-		"id": 150,
-		"name": "Dragoon", 
-		"id_name": "loot-arblast2", 
-		"class": "Wildfire", 
-		"slot": "Main",
-	},
-	{
-		"id": 208,
-		"name": "Bombard", 
-		"id_name": "loot-arblast3", 
-		"class": "Wildfire", 
-		"slot": "Main",
-	},
-	{
-		"id": 209,
-		"name": "Jansky Repeater", 
-		"id_name": "loot-srepeater2", 
-		"class": "Wildfire", 
-		"slot": "Main",
-	},
-	{
-		"id": 108,
-		"name": "Soidal Repeater", 
-		"id_name": "loot-krepeater", 
-		"class": "Wildfire", 
-		"slot": "Main",
-	},
-	{
-		"id": 109,
-		"name": "Bolt Thrower", 
-		"id_name": "loot-bthrower", 
-		"class": "Wildfire", 
-		"slot": "Main",
-	},
-	{
-		"id": 56,
-		"name": "Ancient Gun", 
-		"id_name": "tutorial.loot-repeater", 
-		"class": "Wildfire", 
-		"slot": "Main",
-	},
-	{
-		"id": 65,
-		"name": "Ancient Super Gun", 
-		"id_name": "tutorial.loot-krepeater", 
-		"class": "Wildfire", 
-		"slot": "Main",
-	},
-	{
-		"id": 2,
-		"name": "Frag", 
-		"id_name": "loot-frag", 
-		"class": "Wildfire", 
-		"slot": "Second",
-	},
-	{
-		"id": 38,
-		"name": "Improved Frag", 
-		"id_name": "loot-ifrag", 
-		"class": "Wildfire", 
-		"slot": "Second",
-	},
-	{
-		"id": 151,
-		"name": "Contrived Frag", 
-		"id_name": "loot-frag2", 
-		"class": "Wildfire", 
-		"slot": "Second",
-	},
-	{
-		"id": 152,
-		"name": "Synthetic Frag", 
-		"id_name": "loot-frag3", 
-		"class": "Wildfire", 
-		"slot": "Second",
-	},
-	{
-		"id": 153,
-		"name": "Reforged Frag", 
-		"id_name": "loot-frag4", 
-		"class": "Wildfire", 
-		"slot": "Second",
-	},
-	{
-		"id": 210,
-		"name": "Unstable Frag", 
-		"id_name": "loot-frag5", 
-		"class": "Wildfire", 
-		"slot": "Second",
-	},
-	{
-		"id": 39,
-		"name": "Cluster", 
-		"id_name": "loot-cluster", 
-		"class": "Wildfire", 
-		"slot": "Second",
-	},
-	{
-		"id": 40,
-		"name": "Swarm Cluster", 
-		"id_name": "loot-scluster", 
-		"class": "Wildfire", 
-		"slot": "Second",
-	},
-	{
-		"id": 212,
-		"name": "Hydra", 
-		"id_name": "loot-scluster2", 
-		"class": "Wildfire", 
-		"slot": "Second",
-	},
-	{
-		"id": 194,
-		"name": "Tripwire", 
-		"id_name": "loot-twire", 
-		"class": "Wildfire", 
-		"slot": "Second",
-	},
-	{
-		"id": 110,
-		"name": "Proxies", 
-		"id_name": "loot-proxies", 
-		"class": "Wildfire", 
-		"slot": "Second",
-	},
-	{
-		"id": 57,
-		"name": "Ancient Grenade", 
-		"id_name": "tutorial.loot-frag", 
-		"class": "Wildfire", 
-		"slot": "Second",
-	},
-	{
-		"id": 63,
-		"name": "Blast", 
-		"id_name": "loot-blast", 
-		"class": "Wildfire", 
-		"slot": "Special",
-	},
-	{
-		"id": 69,
-		"name": "Empowered Blast", 
-		"id_name": "loot-eblast", 
-		"class": "Wildfire", 
-		"slot": "Special",
-	},
-	{
-		"id": 154,
-		"name": "Withering Blast", 
-		"id_name": "loot-blast2", 
-		"class": "Wildfire", 
-		"slot": "Special",
-	},
-	{
-		"id": 155,
-		"name": "Voracious Blast", 
-		"id_name": "loot-blast3", 
-		"class": "Wildfire", 
-		"slot": "Special",
-	},
-	{
-		"id": 156,
-		"name": "Zealous Blast", 
-		"id_name": "loot-blast4", 
-		"class": "Wildfire", 
-		"slot": "Special",
-	},
-	{
-		"id": 213,
-		"name": "Furious Blast", 
-		"id_name": "loot-blast5", 
-		"class": "Wildfire", 
-		"slot": "Special",
-	},
-	{
-		"id": 70,
-		"name": "Forceful Blast", 
-		"id_name": "loot-fblast", 
-		"class": "Wildfire", 
-		"slot": "Special",
-	},
-	{
-		"id": 214,
-		"name": "Fireform", 
-		"id_name": "loot-fblast2", 
-		"class": "Wildfire", 
-		"slot": "Special",
-	},
-	{
-		"id": 71,
-		"name": "Scattered Blast", 
-		"id_name": "loot-sblast", 
-		"class": "Wildfire", 
-		"slot": "Special",
-	},
-	{
-		"id": 14,
-		"name": "Jerkin", 
-		"id_name": "loot-scoutarmor", 
-		"class": "Wildfire", 
-		"slot": "Body",
-	},
-	{
-		"id": 55,
-		"name": "Durable Jerkin", 
-		"id_name": "loot-brigandine", 
-		"class": "Wildfire", 
-		"slot": "Body",
-	},
-	{
-		"id": 247,
-		"name": "Augmented Jerkin", 
-		"id_name": "loot-wfbody3", 
-		"class": "Wildfire", 
-		"slot": "Body",
-	},
-	{
-		"id": 248,
-		"name": "Reinforced Jerkin", 
-		"id_name": "loot-wfbody4", 
-		"class": "Wildfire", 
-		"slot": "Body",
-	},
-	{
-		"id": 249,
-		"name": "Resilient Jerkin", 
-		"id_name": "loot-wfbody5", 
-		"class": "Wildfire", 
-		"slot": "Body",
-	},
-	{
-		"id": 261,
-		"name": "Talons", 
-		"id_name": "loot-wfboot1", 
-		"class": "Wildfire", 
-		"slot": "Mobility",
-	},
-	{
-		"id": 262,
-		"name": "Durable Talons", 
-		"id_name": "loot-wfboot2", 
-		"class": "Wildfire", 
-		"slot": "Mobility",
-	},
-	{
-		"id": 263,
-		"name": "Augmented Talons", 
-		"id_name": "loot-wfboot3", 
-		"class": "Wildfire", 
-		"slot": "Mobility",
-	},
-	{
-		"id": 264,
-		"name": "Reinforced Talons", 
-		"id_name": "loot-wfboot4", 
-		"class": "Wildfire", 
-		"slot": "Mobility",
-	},
-	{
-		"id": 265,
-		"name": "Resilient Talons", 
-		"id_name": "loot-wfboot5", 
-		"class": "Wildfire", 
-		"slot": "Mobility",
-	},
-	{
-		"id": 9,
-		"name": "Skein", 
-		"id_name": "loot-skein", 
-		"class": "Duskwing", 
-		"slot": "Main",
-	},
-	{
-		"id": 35,
-		"name": "Nacre Skein", 
-		"id_name": "loot-nskein", 
-		"class": "Duskwing", 
-		"slot": "Main",
-	},
-	{
-		"id": 157,
-		"name": "Cobalt Skein", 
-		"id_name": "loot-skein2", 
-		"class": "Duskwing", 
-		"slot": "Main",
-	},
-	{
-		"id": 158,
-		"name": "Sapphire Skein", 
-		"id_name": "loot-skein3", 
-		"class": "Duskwing", 
-		"slot": "Main",
-	},
-	{
-		"id": 159,
-		"name": "Berylblade Skein", 
-		"id_name": "loot-skein4", 
-		"class": "Duskwing", 
-		"slot": "Main",
-	},
-	{
-		"id": 215,
-		"name": "Vitreous Skein", 
-		"id_name": "loot-skein5", 
-		"class": "Duskwing", 
-		"slot": "Main",
-	},
-	{
-		"id": 46,
-		"name": "Polychrome Skein", 
-		"id_name": "loot-pskein", 
-		"class": "Duskwing", 
-		"slot": "Main",
-	},
-	{
-		"id": 216,
-		"name": "Motley", 
-		"id_name": "loot-pskein2", 
-		"class": "Duskwing", 
-		"slot": "Main",
-	},
-	{
-		"id": 116,
-		"name": "Balefire Skein", 
-		"id_name": "loot-bskein", 
-		"class": "Duskwing", 
-		"slot": "Main",
-	},
-	{
-		"id": 217,
-		"name": "Skyfire Skein", 
-		"id_name": "loot-bskein2", 
-		"class": "Duskwing", 
-		"slot": "Main",
-	},
-	{
-		"id": 117,
-		"name": "Baetyl", 
-		"id_name": "loot-baetyl", 
-		"class": "Duskwing", 
-		"slot": "Main",
-	},
-	{
-		"id": 1,
-		"name": "Aesc", 
-		"id_name": "loot-aesc", 
-		"class": "Duskwing", 
-		"slot": "Second",
-	},
-	{
-		"id": 41,
-		"name": "Biting Aesc", 
-		"id_name": "loot-baesc", 
-		"class": "Duskwing", 
-		"slot": "Second",
-	},
-	{
-		"id": 160,
-		"name": "Falcate Aesc", 
-		"id_name": "loot-aesc2", 
-		"class": "Duskwing", 
-		"slot": "Second",
-	},
-	{
-		"id": 161,
-		"name": "Keen Aesc", 
-		"id_name": "loot-aesc3", 
-		"class": "Duskwing", 
-		"slot": "Second",
-	},
-	{
-		"id": 162,
-		"name": "Violet Aesc", 
-		"id_name": "loot-aesc4", 
-		"class": "Duskwing", 
-		"slot": "Second",
-	},
-	{
-		"id": 218,
-		"name": "Radiant Aesc", 
-		"id_name": "loot-aesc5", 
-		"class": "Duskwing", 
-		"slot": "Second",
-	},
-	{
-		"id": 195,
-		"name": "Haunting Aesc", 
-		"id_name": "loot-haesc", 
-		"class": "Duskwing", 
-		"slot": "Second",
-	},
-	{
-		"id": 72,
-		"name": "Gnawing Aesc", 
-		"id_name": "loot-gaesc", 
-		"class": "Duskwing", 
-		"slot": "Second",
-	},
-	{
-		"id": 111,
-		"name": "Kulbeda", 
-		"id_name": "loot-saes", 
-		"class": "Duskwing", 
-		"slot": "Second",
-	},
-	{
-		"id": 219,
-		"name": "Kunai", 
-		"id_name": "loot-saesc2", 
-		"class": "Duskwing", 
-		"slot": "Main",
-	},
-	{
-		"id": 10,
-		"name": "Warp", 
-		"id_name": "loot-warp", 
-		"class": "Duskwing", 
-		"slot": "Special",
-	},
-	{
-		"id": 42,
-		"name": "Acrotic Warp", 
-		"id_name": "loot-awarp", 
-		"class": "Duskwing", 
-		"slot": "Special",
-	},
-	{
-		"id": 163,
-		"name": "Beloid Warp", 
-		"id_name": "loot-warp2", 
-		"class": "Duskwing", 
-		"slot": "Special",
-	},
-	{
-		"id": 164,
-		"name": "Daedal Warp", 
-		"id_name": "loot-skein", 
-		"class": "Duskwing", 
-		"slot": "Special",
-	},
-	{
-		"id": 165,
-		"name": "Aeon Warp", 
-		"id_name": "loot-warp4", 
-		"class": "Duskwing", 
-		"slot": "Special",
-	},
-	{
-		"id": 221,
-		"name": "Tacent Warp", 
-		"id_name": "loot-warp5", 
-		"class": "Duskwing", 
-		"slot": "Special",
-	},
-	{
-		"id": 196,
-		"name": "Residual Warp", 
-		"id_name": "loot-rwarp", 
-		"class": "Duskwing", 
-		"slot": "Special",
-	},
-	{
-		"id": 98,
-		"name": "Abiding Warp", 
-		"id_name": "loot-bwarp", 
-		"class": "Duskwing", 
-		"slot": "Special",
-	},
-	{
-		"id": 112,
-		"name": "Mirrored Warp", 
-		"id_name": "loot-mwarp", 
-		"class": "Duskwing", 
-		"slot": "Special",
-	},
-	{
-		"id": 222,
-		"name": "Mimic", 
-		"id_name": "loot-mwarp2", 
-		"class": "Duskwing", 
-		"slot": "Special",
-	},{
-		"id": 250,
-		"name": "Augmented Hyrst", 
-		"id_name": "loot-dwbody3", 
-		"class": "Duskwing", 
-		"slot": "Body",
-	},
-	{
-		"id": 251,
-		"name": "Reinforced Hyrst", 
-		"id_name": "loot-dwbody4", 
-		"class": "Duskwing", 
-		"slot": "Body",
-	},
-	{
-		"id": 252,
-		"name": "Resilient Hyrst", 
-		"id_name": "loot-dwbody5", 
-		"class": "Duskwing", 
-		"slot": "Body",
-	},
-	{
-		"id": 184,
-		"name": "Augmented Trackers", 
-		"id_name": "loot-boots3", 
-		"class": "Duskwing", 
-		"slot": "Mobility",
-	},
-	{
-		"id": 259,
-		"name": "Reinforced Trackers", 
-		"id_name": "loot-boots4", 
-		"class": "Duskwing", 
-		"slot": "Mobility",
-	},
-	{
-		"id": 260,
-		"name": "Resilient Trackers", 
-		"id_name": "loot-boots5", 
-		"class": "Duskwing", 
-		"slot": "Mobility",
-	},
-	{
-		"id": 193,
-		"name": "Needlebow", 
-		"id_name": "loot-nbow", 
-		"class": "Wildfire_Duskwing", 
-		"slot": "Main",
-	},
-	{
-		"id": 144,
-		"name": "Stonebow", 
-		"id_name": "loot-boots5", 
-		"class": "Wildfire_Duskwing", 
-		"slot": "Main",
-	},
-	{
-		"id": 34,
-		"name": "Hyrst", 
-		"id_name": "loot-hyrst", 
-		"class": "Wildfire_Duskwing", 
-		"slot": "Body",
-	},
-	{
-		"id": 103,
-		"name": "Durable Hyrst", 
-		"id_name": "loot-boots5", 
-		"class": "Wildfire_Duskwing", 
-		"slot": "Body",
-	},
-	{
-		"id": 15,
-		"name": "Trackers", 
-		"id_name": "loot-eqboots", 
-		"class": "Wildfire_Duskwing", 
-		"slot": "Mobility",
-	},
-	{
-		"id": 258,
-		"name": "Durable Trackers", 
-		"id_name": "loot-boots2", 
-		"class": "Wildfire_Duskwing", 
-		"slot": "Mobility",
-	},
-	{
-		"id": 16,
-		"name": "Empyreals", 
-		"id_name": "loot-emboots", 
-		"class": "Wildfire_Duskwing", 
-		"slot": "Mobility",
-	},
-	{
-		"id": 266,
-		"name": "Aeonic Empyreals", 
-		"id_name": "loot-emboots2", 
-		"class": "Wildfire_Duskwing", 
-		"slot": "Mobility",
-	},
-	{
-		"id": 188,
-		"name": "Bandolier", 
-		"id_name": "loot-band", 
-		"class": "Wildfire_Duskwing_Ironclad", 
-		"slot": "Body",
-	},
-	{
-		"id": 189,
-		"name": "Double Bandolier", 
-		"id_name": "loot-dband", 
-		"class": "Wildfire_Duskwing_Ironclad", 
-		"slot": "Body",
-	},
-	{
-		"id": 190,
-		"name": "Berserker", 
-		"id_name": "loot-berserker", 
-		"class": "Wildfire_Duskwing_Ironclad", 
-		"slot": "Body",
-	},
-	{
-		"id": 256,
-		"name": "Frenzied Berserker", 
-		"id_name": "loot-berserker2", 
-		"class": "Wildfire_Duskwing_Ironclad", 
-		"slot": "Body",
-	},
-	{
+    {
+        "id": 31,
+        "name": "Kantikoy Repeater",
+        "id_name": "loot-krepeater",
+        "class": "Wildfire",
+        "slot": "Main"
+    },
+    {
+        "id": 147,
+        "name": "Compound Repeater",
+        "id_name": "loot-repeater2",
+        "class": "Wildfire",
+        "slot": "Main"
+    },
+    {
+        "id": 148,
+        "name": "Redshift Repeater",
+        "id_name": "loot-repeater3",
+        "class": "Wildfire",
+        "slot": "Main"
+    },
+    {
+        "id": 149,
+        "name": "Tektite Repeater",
+        "id_name": "loot-repeater4",
+        "class": "Wildfire",
+        "slot": "Main"
+    },
+    {
+        "id": 207,
+        "name": "Aerolith Repeater",
+        "id_name": "loot-repeater5",
+        "class": "Wildfire",
+        "slot": "Main"
+    },
+    {
+        "id": 4,
+        "name": "Shotgun",
+        "id_name": "loot-shotgun",
+        "class": "Wildfire",
+        "slot": "Main"
+    },
+    {
+        "id": 5,
+        "name": "Arblast",
+        "id_name": "loot-arblast",
+        "class": "Wildfire",
+        "slot": "Main"
+    },
+    {
+        "id": 150,
+        "name": "Dragoon",
+        "id_name": "loot-arblast2",
+        "class": "Wildfire",
+        "slot": "Main"
+    },
+    {
+        "id": 208,
+        "name": "Bombard",
+        "id_name": "loot-arblast3",
+        "class": "Wildfire",
+        "slot": "Main"
+    },
+    {
+        "id": 209,
+        "name": "Jansky Repeater",
+        "id_name": "loot-srepeater2",
+        "class": "Wildfire",
+        "slot": "Main"
+    },
+    {
+        "id": 108,
+        "name": "Soidal Repeater",
+        "id_name": "loot-krepeater",
+        "class": "Wildfire",
+        "slot": "Main"
+    },
+    {
+        "id": 109,
+        "name": "Bolt Thrower",
+        "id_name": "loot-bthrower",
+        "class": "Wildfire",
+        "slot": "Main"
+    },
+    {
+        "id": 56,
+        "name": "Ancient Gun",
+        "id_name": "tutorial.loot-repeater",
+        "class": "Wildfire",
+        "slot": "Main"
+    },
+    {
+        "id": 65,
+        "name": "Ancient Super Gun",
+        "id_name": "tutorial.loot-krepeater",
+        "class": "Wildfire",
+        "slot": "Main"
+    },
+    {
+        "id": 2,
+        "name": "Frag",
+        "id_name": "loot-frag",
+        "class": "Wildfire",
+        "slot": "Second"
+    },
+    {
+        "id": 38,
+        "name": "Improved Frag",
+        "id_name": "loot-ifrag",
+        "class": "Wildfire",
+        "slot": "Second"
+    },
+    {
+        "id": 151,
+        "name": "Contrived Frag",
+        "id_name": "loot-frag2",
+        "class": "Wildfire",
+        "slot": "Second"
+    },
+    {
+        "id": 152,
+        "name": "Synthetic Frag",
+        "id_name": "loot-frag3",
+        "class": "Wildfire",
+        "slot": "Second"
+    },
+    {
+        "id": 153,
+        "name": "Reforged Frag",
+        "id_name": "loot-frag4",
+        "class": "Wildfire",
+        "slot": "Second"
+    },
+    {
+        "id": 210,
+        "name": "Unstable Frag",
+        "id_name": "loot-frag5",
+        "class": "Wildfire",
+        "slot": "Second"
+    },
+    {
+        "id": 39,
+        "name": "Cluster",
+        "id_name": "loot-cluster",
+        "class": "Wildfire",
+        "slot": "Second"
+    },
+    {
+        "id": 40,
+        "name": "Swarm Cluster",
+        "id_name": "loot-scluster",
+        "class": "Wildfire",
+        "slot": "Second"
+    },
+    {
+        "id": 212,
+        "name": "Hydra",
+        "id_name": "loot-scluster2",
+        "class": "Wildfire",
+        "slot": "Second"
+    },
+    {
+        "id": 194,
+        "name": "Tripwire",
+        "id_name": "loot-twire",
+        "class": "Wildfire",
+        "slot": "Second"
+    },
+    {
+        "id": 110,
+        "name": "Proxies",
+        "id_name": "loot-proxies",
+        "class": "Wildfire",
+        "slot": "Second"
+    },
+    {
+        "id": 57,
+        "name": "Ancient Grenade",
+        "id_name": "tutorial.loot-frag",
+        "class": "Wildfire",
+        "slot": "Second"
+    },
+    {
+        "id": 63,
+        "name": "Blast",
+        "id_name": "loot-blast",
+        "class": "Wildfire",
+        "slot": "Special"
+    },
+    {
+        "id": 69,
+        "name": "Empowered Blast",
+        "id_name": "loot-eblast",
+        "class": "Wildfire",
+        "slot": "Special"
+    },
+    {
+        "id": 154,
+        "name": "Withering Blast",
+        "id_name": "loot-blast2",
+        "class": "Wildfire",
+        "slot": "Special"
+    },
+    {
+        "id": 155,
+        "name": "Voracious Blast",
+        "id_name": "loot-blast3",
+        "class": "Wildfire",
+        "slot": "Special"
+    },
+    {
+        "id": 156,
+        "name": "Zealous Blast",
+        "id_name": "loot-blast4",
+        "class": "Wildfire",
+        "slot": "Special"
+    },
+    {
+        "id": 213,
+        "name": "Furious Blast",
+        "id_name": "loot-blast5",
+        "class": "Wildfire",
+        "slot": "Special"
+    },
+    {
+        "id": 70,
+        "name": "Forceful Blast",
+        "id_name": "loot-fblast",
+        "class": "Wildfire",
+        "slot": "Special"
+    },
+    {
+        "id": 214,
+        "name": "Fireform",
+        "id_name": "loot-fblast2",
+        "class": "Wildfire",
+        "slot": "Special"
+    },
+    {
+        "id": 71,
+        "name": "Scattered Blast",
+        "id_name": "loot-sblast",
+        "class": "Wildfire",
+        "slot": "Special"
+    },
+    {
+        "id": 14,
+        "name": "Jerkin",
+        "id_name": "loot-scoutarmor",
+        "class": "Wildfire",
+        "slot": "Body"
+    },
+    {
+        "id": 55,
+        "name": "Durable Jerkin",
+        "id_name": "loot-brigandine",
+        "class": "Wildfire",
+        "slot": "Body"
+    },
+    {
+        "id": 247,
+        "name": "Augmented Jerkin",
+        "id_name": "loot-wfbody3",
+        "class": "Wildfire",
+        "slot": "Body"
+    },
+    {
+        "id": 248,
+        "name": "Reinforced Jerkin",
+        "id_name": "loot-wfbody4",
+        "class": "Wildfire",
+        "slot": "Body"
+    },
+    {
+        "id": 249,
+        "name": "Resilient Jerkin",
+        "id_name": "loot-wfbody5",
+        "class": "Wildfire",
+        "slot": "Body"
+    },
+    {
+        "id": 261,
+        "name": "Talons",
+        "id_name": "loot-wfboot1",
+        "class": "Wildfire",
+        "slot": "Mobility"
+    },
+    {
+        "id": 262,
+        "name": "Durable Talons",
+        "id_name": "loot-wfboot2",
+        "class": "Wildfire",
+        "slot": "Mobility"
+    },
+    {
+        "id": 263,
+        "name": "Augmented Talons",
+        "id_name": "loot-wfboot3",
+        "class": "Wildfire",
+        "slot": "Mobility"
+    },
+    {
+        "id": 264,
+        "name": "Reinforced Talons",
+        "id_name": "loot-wfboot4",
+        "class": "Wildfire",
+        "slot": "Mobility"
+    },
+    {
+        "id": 265,
+        "name": "Resilient Talons",
+        "id_name": "loot-wfboot5",
+        "class": "Wildfire",
+        "slot": "Mobility"
+    },
+    {
+        "id": 9,
+        "name": "Skein",
+        "id_name": "loot-skein",
+        "class": "Duskwing",
+        "slot": "Main"
+    },
+    {
+        "id": 35,
+        "name": "Nacre Skein",
+        "id_name": "loot-nskein",
+        "class": "Duskwing",
+        "slot": "Main"
+    },
+    {
+        "id": 157,
+        "name": "Cobalt Skein",
+        "id_name": "loot-skein2",
+        "class": "Duskwing",
+        "slot": "Main"
+    },
+    {
+        "id": 158,
+        "name": "Sapphire Skein",
+        "id_name": "loot-skein3",
+        "class": "Duskwing",
+        "slot": "Main"
+    },
+    {
+        "id": 159,
+        "name": "Berylblade Skein",
+        "id_name": "loot-skein4",
+        "class": "Duskwing",
+        "slot": "Main"
+    },
+    {
+        "id": 215,
+        "name": "Vitreous Skein",
+        "id_name": "loot-skein5",
+        "class": "Duskwing",
+        "slot": "Main"
+    },
+    {
+        "id": 46,
+        "name": "Polychrome Skein",
+        "id_name": "loot-pskein",
+        "class": "Duskwing",
+        "slot": "Main"
+    },
+    {
+        "id": 216,
+        "name": "Motley",
+        "id_name": "loot-pskein2",
+        "class": "Duskwing",
+        "slot": "Main"
+    },
+    {
+        "id": 116,
+        "name": "Balefire Skein",
+        "id_name": "loot-bskein",
+        "class": "Duskwing",
+        "slot": "Main"
+    },
+    {
+        "id": 217,
+        "name": "Skyfire Skein",
+        "id_name": "loot-bskein2",
+        "class": "Duskwing",
+        "slot": "Main"
+    },
+    {
+        "id": 117,
+        "name": "Baetyl",
+        "id_name": "loot-baetyl",
+        "class": "Duskwing",
+        "slot": "Main"
+    },
+    {
+        "id": 1,
+        "name": "Aesc",
+        "id_name": "loot-aesc",
+        "class": "Duskwing",
+        "slot": "Second"
+    },
+    {
+        "id": 41,
+        "name": "Biting Aesc",
+        "id_name": "loot-baesc",
+        "class": "Duskwing",
+        "slot": "Second"
+    },
+    {
+        "id": 160,
+        "name": "Falcate Aesc",
+        "id_name": "loot-aesc2",
+        "class": "Duskwing",
+        "slot": "Second"
+    },
+    {
+        "id": 161,
+        "name": "Keen Aesc",
+        "id_name": "loot-aesc3",
+        "class": "Duskwing",
+        "slot": "Second"
+    },
+    {
+        "id": 162,
+        "name": "Violet Aesc",
+        "id_name": "loot-aesc4",
+        "class": "Duskwing",
+        "slot": "Second"
+    },
+    {
+        "id": 218,
+        "name": "Radiant Aesc",
+        "id_name": "loot-aesc5",
+        "class": "Duskwing",
+        "slot": "Second"
+    },
+    {
+        "id": 195,
+        "name": "Haunting Aesc",
+        "id_name": "loot-haesc",
+        "class": "Duskwing",
+        "slot": "Second"
+    },
+    {
+        "id": 72,
+        "name": "Gnawing Aesc",
+        "id_name": "loot-gaesc",
+        "class": "Duskwing",
+        "slot": "Second"
+    },
+    {
+        "id": 111,
+        "name": "Kulbeda",
+        "id_name": "loot-saes",
+        "class": "Duskwing",
+        "slot": "Second"
+    },
+    {
+        "id": 219,
+        "name": "Kunai",
+        "id_name": "loot-saesc2",
+        "class": "Duskwing",
+        "slot": "Main"
+    },
+    {
+        "id": 10,
+        "name": "Warp",
+        "id_name": "loot-warp",
+        "class": "Duskwing",
+        "slot": "Special"
+    },
+    {
+        "id": 42,
+        "name": "Acrotic Warp",
+        "id_name": "loot-awarp",
+        "class": "Duskwing",
+        "slot": "Special"
+    },
+    {
+        "id": 163,
+        "name": "Beloid Warp",
+        "id_name": "loot-warp2",
+        "class": "Duskwing",
+        "slot": "Special"
+    },
+    {
+        "id": 164,
+        "name": "Daedal Warp",
+        "id_name": "loot-skein",
+        "class": "Duskwing",
+        "slot": "Special"
+    },
+    {
+        "id": 165,
+        "name": "Aeon Warp",
+        "id_name": "loot-warp4",
+        "class": "Duskwing",
+        "slot": "Special"
+    },
+    {
+        "id": 221,
+        "name": "Tacent Warp",
+        "id_name": "loot-warp5",
+        "class": "Duskwing",
+        "slot": "Special"
+    },
+    {
+        "id": 196,
+        "name": "Residual Warp",
+        "id_name": "loot-rwarp",
+        "class": "Duskwing",
+        "slot": "Special"
+    },
+    {
+        "id": 98,
+        "name": "Abiding Warp",
+        "id_name": "loot-bwarp",
+        "class": "Duskwing",
+        "slot": "Special"
+    },
+    {
+        "id": 112,
+        "name": "Mirrored Warp",
+        "id_name": "loot-mwarp",
+        "class": "Duskwing",
+        "slot": "Special"
+    },
+    {
+        "id": 222,
+        "name": "Mimic",
+        "id_name": "loot-mwarp2",
+        "class": "Duskwing",
+        "slot": "Special"
+    },
+    {
+        "id": 250,
+        "name": "Augmented Hyrst",
+        "id_name": "loot-dwbody3",
+        "class": "Duskwing",
+        "slot": "Body"
+    },
+    {
+        "id": 251,
+        "name": "Reinforced Hyrst",
+        "id_name": "loot-dwbody4",
+        "class": "Duskwing",
+        "slot": "Body"
+    },
+    {
+        "id": 252,
+        "name": "Resilient Hyrst",
+        "id_name": "loot-dwbody5",
+        "class": "Duskwing",
+        "slot": "Body"
+    },
+    {
+        "id": 184,
+        "name": "Augmented Trackers",
+        "id_name": "loot-boots3",
+        "class": "Duskwing",
+        "slot": "Mobility"
+    },
+    {
+        "id": 259,
+        "name": "Reinforced Trackers",
+        "id_name": "loot-boots4",
+        "class": "Duskwing",
+        "slot": "Mobility"
+    },
+    {
+        "id": 260,
+        "name": "Resilient Trackers",
+        "id_name": "loot-boots5",
+        "class": "Duskwing",
+        "slot": "Mobility"
+    },
+    {
+        "id": 193,
+        "name": "Needlebow",
+        "id_name": "loot-nbow",
+        "class": "Wildfire_Duskwing",
+        "slot": "Main"
+    },
+    {
+        "id": 144,
+        "name": "Stonebow",
+        "id_name": "loot-boots5",
+        "class": "Wildfire_Duskwing",
+        "slot": "Main"
+    },
+    {
+        "id": 34,
+        "name": "Hyrst",
+        "id_name": "loot-hyrst",
+        "class": "Wildfire_Duskwing",
+        "slot": "Body"
+    },
+    {
+        "id": 103,
+        "name": "Durable Hyrst",
+        "id_name": "loot-boots5",
+        "class": "Wildfire_Duskwing",
+        "slot": "Body"
+    },
+    {
+        "id": 15,
+        "name": "Trackers",
+        "id_name": "loot-eqboots",
+        "class": "Wildfire_Duskwing",
+        "slot": "Mobility"
+    },
+    {
+        "id": 258,
+        "name": "Durable Trackers",
+        "id_name": "loot-boots2",
+        "class": "Wildfire_Duskwing",
+        "slot": "Mobility"
+    },
+    {
+        "id": 16,
+        "name": "Empyreals",
+        "id_name": "loot-emboots",
+        "class": "Wildfire_Duskwing",
+        "slot": "Mobility"
+    },
+    {
+        "id": 266,
+        "name": "Aeonic Empyreals",
+        "id_name": "loot-emboots2",
+        "class": "Wildfire_Duskwing",
+        "slot": "Mobility"
+    },
+    {
+        "id": 188,
+        "name": "Bandolier",
+        "id_name": "loot-band",
+        "class": "Wildfire_Duskwing_Ironclad",
+        "slot": "Body"
+    },
+    {
+        "id": 189,
+        "name": "Double Bandolier",
+        "id_name": "loot-dband",
+        "class": "Wildfire_Duskwing_Ironclad",
+        "slot": "Body"
+    },
+    {
+        "id": 190,
+        "name": "Berserker",
+        "id_name": "loot-berserker",
+        "class": "Wildfire_Duskwing_Ironclad",
+        "slot": "Body"
+    },
+    {
+        "id": 256,
+        "name": "Frenzied Berserker",
+        "id_name": "loot-berserker2",
+        "class": "Wildfire_Duskwing_Ironclad",
+        "slot": "Body"
+    },
+    {
         "id": 6,
         "name": "Sledge",
         "id_name": "loot-sledge",
@@ -936,7 +937,7 @@
         "class": "Ironclad",
         "slot": "Mobility"
     },
-	{
+    {
         "id": 53,
         "name": "Dancer",
         "id_name": "loot-dancer",
@@ -1244,7 +1245,7 @@
         "class": "Fabricator",
         "slot": "Mobility"
     },
-	{
+    {
         "id": 277,
         "name": "Boosters",
         "id_name": "loot-boosters3",
@@ -1272,7 +1273,7 @@
         "class": "Iconclad_Fabricator",
         "slot": "Mobility"
     },
-	{
+    {
         "id": 18,
         "name": "Health Boost 1",
         "id_name": "loot-health1",
