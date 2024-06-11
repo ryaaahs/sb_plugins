@@ -1,0 +1,19 @@
+73|Inferior Bellites|loot-ibellites
+74|Bellites|loot-bellites
+76|Inferior Salites|loot-isalites
+77|Salites|loot-salites
+79|Inferior Delites|loot-idelites
+80|Delites|loot-delites
+82|Inferior Calites|loot-icalites
+83|Calites|loot-calites
+85|Inferior Armites|loot-iarmites
+86|Armites|loot-armites
+88|Exites|loot-exites
+89|Inferior Emites|loot-iemites
+90|Emites|loot-emites
+299|Inferior Velites|loot-ivelites
+300|Velites|loot-velites
+302|Inferior Firites|loot-ifirites
+303|Firites|loot-firites
+308|Inferior Ultrites|loot-iultrites
+309|Ultrites|loot-ultrites

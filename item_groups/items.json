@@ -1670,5 +1670,138 @@
         "id_name": "loot-mysteriouskey",
         "class": "Miscellaneous",
         "slot": "NA"
+    },
+    {
+        "id": 73,
+        "name": "Inferior Bellites",
+        "id_name": "loot-ibellites",
+        "class": "Any",
+        "slot": "Implant"
+    },
+    {
+        "id": 74,
+        "name": "Bellites",
+        "id_name": "loot-bellites",
+        "class": "Any",
+        "slot": "Implant"
+    },
+    {
+        "id": 76,
+        "name": "Inferior Salites",
+        "id_name": "loot-isalites",
+        "class": "Any",
+        "slot": "Implant"
+    },
+    {
+        "id": 77,
+        "name": "Salites",
+        "id_name": "loot-salites",
+        "class": "Any",
+        "slot": "Implant"
+    },
+    {
+        "id": 79,
+        "name": "Inferior Delites",
+        "id_name": "loot-idelites",
+        "class": "Any",
+        "slot": "Implant"
+    },
+    {
+        "id": 80,
+        "name": "Delites",
+        "id_name": "loot-delites",
+        "class": "Any",
+        "slot": "Implant"
+    },
+    {
+        "id": 82,
+        "name": "Inferior Calites",
+        "id_name": "loot-icalites",
+        "class": "Any",
+        "slot": "Implant"
+    },
+    {
+        "id": 83,
+        "name": "Calites",
+        "id_name": "loot-calites",
+        "class": "Any",
+        "slot": "Implant"
+    },
+    {
+        "id": 85,
+        "name": "Inferior Armites",
+        "id_name": "loot-iarmites",
+        "class": "Any",
+        "slot": "Implant"
+    },
+    {
+        "id": 86,
+        "name": "Armites",
+        "id_name": "loot-armites",
+        "class": "Any",
+        "slot": "Implant"
+    },
+    {
+        "id": 88,
+        "name": "Exites",
+        "id_name": "loot-exites",
+        "class": "Any",
+        "slot": "Implant"
+    },
+    {
+        "id": 89,
+        "name": "Inferior Emites",
+        "id_name": "loot-iemites",
+        "class": "Any",
+        "slot": "Implant"
+    },
+    {
+        "id": 90,
+        "name": "Emites",
+        "id_name": "loot-emites",
+        "class": "Any",
+        "slot": "Implant"
+    },
+    {
+        "id": 299,
+        "name": "Inferior Velites",
+        "id_name": "loot-ivelites",
+        "class": "Any",
+        "slot": "Implant"
+    },
+    {
+        "id": 300,
+        "name": "Velites",
+        "id_name": "loot-velites",
+        "class": "Any",
+        "slot": "Implant"
+    },
+    {
+        "id": 302,
+        "name": "Inferior Firites",
+        "id_name": "loot-ifirites",
+        "class": "Any",
+        "slot": "Implant"
+    },
+    {
+        "id": 303,
+        "name": "Firites",
+        "id_name": "loot-firites",
+        "class": "Any",
+        "slot": "Implant"
+    },
+    {
+        "id": 308,
+        "name": "Inferior Ultrites",
+        "id_name": "loot-iultrites",
+        "class": "Any",
+        "slot": "Implant"
+    },
+    {
+        "id": 309,
+        "name": "Ultrites",
+        "id_name": "loot-ultrites",
+        "class": "Any",
+        "slot": "Implant"
     }
 ]
