@@ -82,6 +82,7 @@ class GraphicWindow(Graphic):
         self.text_position = 0
         self.base_window_y = 0
         self.panels = []
+        self.panel_is_first_item = True
 
     def addPanelGroup(self, panel_group):
         self.panels.append(panel_group)
@@ -110,9 +111,15 @@ class GraphicWindow(Graphic):
         for panel in panels:
             if isinstance(panel, PanelGroup):
                 # levels = 1
-                self.text_position += panel.reset(
-                    self.x, self.text_position, self.w, 1, self.base_window_y
-                )
+                if self.panel_is_first_item:
+                    self.text_position += panel.reset(
+                        self.x, self.text_position + 1, self.w, 1, self.base_window_y
+                    )
+                    self.panel_is_first_item = False
+                else:
+                    self.text_position += panel.reset(
+                        self.x, self.text_position, self.w, 1, self.base_window_y
+                    )
                 self.renderNestedPanels(panel.panels)
             else:
                 if not isinstance(panel.parent, PanelGroup):
@@ -127,7 +134,8 @@ class GraphicWindow(Graphic):
                         if self.y + self.h < self.refs.windowH
                         else max(self.y - self.h, 0)
                     )
-
+            self.panel_is_first_item = False
+        
     def reset(self, x, y):
         self.text_position = 0
         self.x = x
@@ -181,7 +189,7 @@ class PanelGroup(Graphic):
             if isinstance(panel, PanelGroup):
                 self.defineWindow(panel.panels)
             else:
-                self.w = max(self.w, panel.w + 2 * self.panel_spacing_w) - 1
+                self.w = max(self.w, panel.w + 2 * self.panel_spacing_w)
                 self.h += panel.h
 
     def setDisplayColour(self):
@@ -208,7 +216,6 @@ class PanelGroup(Graphic):
                 panel.x = self.panel_spacing_w + (self.levels * 5)
                 panel.y = self.text_position
 
-                self.h += panel.h
                 self.text_position += panel.h
 
                 self.x = min(x, self.refs.windowW - self.w)
@@ -226,11 +233,14 @@ class PanelGroup(Graphic):
         self.base_window_y = base_window_y
         self.levels += levels
 
-        self.h = 0
         self.text_position = y
-        self.w = width
-
+        
+        self.defineWindow(self.panels)
+        self.w = self.w - 1
+        self.h = self.h - 1
+        
         self.renderNestedPanels(self.panels, x, y)
+
         return self.h
 
     def draw(self):

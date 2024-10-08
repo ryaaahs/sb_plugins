@@ -198,6 +198,8 @@ class Plugin(PluginBase):
 
                 chest = ffi.cast("struct Chest *", game_object)
                 chest_props = game_object.props
+                display_x_spacing = 25
+                display_y_spacing = 15
 
                 # Get chest X/Y to base our display off of
                 x = (
@@ -211,45 +213,107 @@ class Plugin(PluginBase):
                 x = round(x / self.refs.scaleX)
                 y = round(y / self.refs.scaleY)
 
-                main_window = GraphicWindow(self.refs)
-
-                panel_group_number = 0
-
-                height_scale = (
-                    util.veclen(chest.angles)
-                    + self.total_boost_length_dict[game_object.objId]
-                )
-
                 # Remove display if the user opens the chest
                 if chest.pos == -1:
+                    displays = []
+                    # Base display [ [1**] [] [] ]
+                    displays.append(GraphicWindow(self.refs))
+                    
+                    max_item_base = 15
+                    
+                    display_index = 0
+                    panel_group_number = 0
+                    text_element_index = 0
+                    chest_length = 0
+                    total_displays = 0
+
                     for element in self.display_dict[game_object.objId]:
+                        if len(element["boosts"]) > 0:
+                            for boost_elements in element["boosts"]:
+                                chest_length += 1
+                        chest_length += 1
+
+                    if (chest_length <= max_item_base):
+                        total_displays = 1
+                    elif (chest_length <= (max_item_base * 2)):
+                        total_displays = 2
+                    else:
+                        total_displays = 3
+                    
+                    max_item_display = max_item_base if total_displays == 1 else int(chest_length / total_displays)
+
+                    for index, element in enumerate(self.display_dict[game_object.objId]):
+                        if (text_element_index >= max_item_display):
+                            displays.append(GraphicWindow(self.refs))
+                            display_index += 1
+                            text_element_index = 0
 
                         if len(element["boosts"]) == 0:
-                            main_window.addLabel(element["item"]["text"])
-                            main_window.addPanelDivider()
+                            text_element_index += 1
+
+                            displays[display_index].addLabel(element["item"]["text"])
+                            if (chest_length < max_item_display) and (chest_length != text_element_index): 
+                                displays[display_index].addPanelDivider()
+                            # First check to see if we are not on the max display
+                            # Second, check to see if we are at the end of the display dict list
+                            elif (max_item_display != text_element_index) and index != len(self.display_dict[game_object.objId]) - 1: 
+                                displays[display_index].addPanelDivider()
+                            
                         else:
-                            panel_group = PanelGroup(
-                                self.refs, main_window, "pg" + str(panel_group_number)
-                            )
                             panel_group_number += 1
+                            panel_group = PanelGroup(
+                                self.refs, displays[display_index], "pg" + str(panel_group_number)
+                            )
+                            
+                            text_element_index += 1
                             panel_group.addLabel(
                                 element["item"]["text"],
                                 0,
                                 element["item"]["label_colour"],
                             )
+                            
+
                             for boost_elements in element["boosts"]:
+                                text_element_index += 1 
                                 panel_group.addLabel(
                                     boost_elements["text"], 1, boost_elements["colour"]
-                                )
+                                )   
+                            if (chest_length < max_item_display) and (chest_length != text_element_index): 
+                                panel_group.addPanelDivider()
+                            # First check to see if we are not on the max display
+                            # Second, check to see if we overflow on max display
+                            # Third, check to see if we are at the end of the display dict list
+                            elif (max_item_display != text_element_index) and (text_element_index < max_item_display) and index != len(self.display_dict[game_object.objId]) - 1: 
+                                panel_group.addPanelDivider()
 
-                            panel_group.addPanelDivider()
-                            main_window.addPanelGroup(panel_group)
+                            displays[display_index].addPanelGroup(panel_group)
 
-                    main_window.defineWindow(main_window.panels, False)
-                    main_window.reset(x - int(main_window.w / 2), y - main_window.h)
+                    for element in displays:
+                        element.drawBorder()
+                        element.defineWindow(element.panels, False)
+                    
+                    if len(displays) == 1:
+                        # Base display [ [1**] [] [] ]
+                        displays[0].reset(x - int(displays[0].w / 2), y - displays[0].h - display_y_spacing)
+                        displays[0].draw()
+                    elif len(displays) == 2:
+                        # Base display [ [1**] [2**] [] ]
+                        displays[0].reset(x - int(displays[0].w) - int(display_x_spacing / 2), y - displays[0].h - display_y_spacing)
+                        displays[1].reset(x + int(display_x_spacing / 2), y - displays[1].h - display_y_spacing)
 
-                    main_window.draw()
+                        displays[0].draw()
+                        displays[1].draw()
+                        # logging.info("Two displays")
+                    elif len(displays) == 3:
+                        # Base display [ [1**] [2**] [3**] ]
+                        displays[0].reset(x - int(displays[0].w) - (chest_props.wmp // 512) - displays[1].w + display_x_spacing, y - displays[0].h - display_y_spacing)
+                        displays[1].reset(x - int(displays[1].w / 2), y - displays[1].h - display_y_spacing)
+                        displays[2].reset(x + (chest_props.wmp // 512) + displays[1].w - display_x_spacing, y - displays[2].h - display_y_spacing)
 
+                        displays[0].draw()
+                        displays[1].draw()
+                        displays[2].draw()
+                        # logging.info("Three displays")
 
 def writeToDebugFile(test_string):
     with open(DEBUG_LOGPATH, "a") as file:
