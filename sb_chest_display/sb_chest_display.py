@@ -1,11 +1,7 @@
 import logging
 import os
 import util
-import time
 import json
-import ctypes
-import time
-import math
 
 from sb_gui import *
 
@@ -117,8 +113,6 @@ class Plugin(PluginBase):
 
                 # We have a chest object
                 if util.getClassName(game_object) == "Chest":
-                    # self.longest_name_object = util.PlainText(font='HemiHeadBold')
-                    # self.longest_boost_name_object = util.PlainText(font='HemiHeadBold')
                     self.total_boost_length = 0
 
                     chest = ffi.cast("struct Chest *", game_object)
@@ -303,7 +297,6 @@ class Plugin(PluginBase):
 
                         displays[0].draw()
                         displays[1].draw()
-                        # logging.info("Two displays")
                     elif len(displays) == 3:
                         # Base display [ [1**] [2**] [3**] ]
                         displays[0].reset(x - int(displays[0].w) - (chest_props.wmp // 512) - displays[1].w + display_x_spacing, y - displays[0].h - display_y_spacing)
@@ -313,7 +306,6 @@ class Plugin(PluginBase):
                         displays[0].draw()
                         displays[1].draw()
                         displays[2].draw()
-                        # logging.info("Three displays")
 
 def writeToDebugFile(test_string):
     with open(DEBUG_LOGPATH, "a") as file:

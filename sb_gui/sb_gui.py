@@ -1,11 +1,5 @@
 import logging
-import os
 import util
-import time
-import json
-import ctypes
-import time
-import math
 
 from enum import Enum
 from _remote import ffi, lib
@@ -141,8 +135,6 @@ class GraphicWindow(Graphic):
         self.x = x
         self.y = y
         self.base_window_y = y
-        # Calculate window and panel values
-        # self.defineWindow(self.panels)
         self.renderNestedPanels(self.panels)
 
     def draw(self):
@@ -320,7 +312,7 @@ class GraphicPanelLabel(GraphicPanel):
 
 
 # For testing within the Plugin folder of SBPE
-# Normal use would be pulling in the file from the main directory of the SBPE
+# Normal use would be placing the classes within the file you want the GUI classes in
 # class Plugin(PluginBase):
 #     def onPresent(self):
 # pass

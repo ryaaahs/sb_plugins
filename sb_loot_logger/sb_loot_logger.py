@@ -3,9 +3,6 @@ import os
 import util
 import time
 import json
-import ctypes
-import time
-import math
 
 from enum import Enum
 from _remote import ffi, lib
