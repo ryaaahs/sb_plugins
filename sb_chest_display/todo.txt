@@ -1,0 +1,6 @@
+[x] (Visual Bug) HR bar issue with boosted items and regular items (Redo logic)
+[] (Feature) Filter by boost
+[] (Feature) Filter by item
+    [] Filter for only specific items
+    [] Remove filter of specific items
+[] (Feature) Sum up total EC from the chest into a single point
