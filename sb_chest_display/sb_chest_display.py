@@ -367,6 +367,7 @@ class Plugin(PluginBase):
             "bool",
             {
                 "scd_display_box": True,
+                "scd_ec_uc_compress": True,
             },
         )
 
@@ -375,12 +376,13 @@ class Plugin(PluginBase):
         self.is_home = False
         self.new_subworld = False
         self.display_dict = {}
+        self.ec_dict = {}
+        self.uc_dict = {}
         self.longest_name = ""
         self.longest_boost_name = ""
         self.longest_boost_name_dict = {}
         self.longest_name_dict = {}
-        self.total_boost_length = 0
-        self.total_boost_length_dict = {}
+        self.chest_length_dict = {}
         self.current_floor_chests_ids = []
 
         # Load the json items
@@ -417,7 +419,10 @@ class Plugin(PluginBase):
 
                 # We have a chest object
                 if util.getClassName(game_object) == "Chest":
-                    self.total_boost_length = 0
+                    chest_length = 0
+                    total_ec_value = 0
+                    total_uc_value = 0
+
 
                     chest = ffi.cast("struct Chest *", game_object)
 
@@ -425,6 +430,8 @@ class Plugin(PluginBase):
 
                         # Iterate through all the Items within the chest and store them within a display dict for later
                         self.display_dict[game_object.objId] = []
+                        self.ec_dict[game_object.objId] = 0
+                        self.uc_dict[game_object.objId] = 0
                         for item in reFieldToList(
                             chest.items, "struct ItemProperties *"
                         ):
@@ -438,6 +445,16 @@ class Plugin(PluginBase):
                             boosts = reFieldToList(
                                 item.statboosts, "struct StatBoost *"
                             )
+
+                            if (self.config.scd_ec_uc_compress):
+                                item_name = loot_item.get("name")
+                                if "EC" in item_name:
+                                    total_ec_value += int(item_name.split(' ', 1)[0])
+                                    continue
+                                elif "UC" in item_name:
+                                    total_uc_value += int(item_name.split(' ', 1)[0])
+                                    continue
+
                             logging_name = (
                                 ITEM_MODS[len(boosts)] + " " + loot_item.get("name")
                                 if len(boosts) > 0
@@ -452,18 +469,24 @@ class Plugin(PluginBase):
                                 item.statboosts,
                             )
 
-                            self.total_boost_length += len(boosts)
-                            self.display_dict[game_object.objId].append(
-                                item_display_name
-                            )
+                            chest_length += len(boosts) + 1 if len(boosts) > 0 else 1
+                            self.display_dict[game_object.objId].append(item_display_name)
 
                         self.current_floor_chests_ids.append(game_object.objId)
+                        
+                        if (total_ec_value > 0):
+                            self.display_dict[game_object.objId].append(addPlainToLoggingDisplay(
+                                self,
+                                str(total_ec_value) + " EC"
+                            ))
+                        if (total_uc_value > 0):
+                            self.display_dict[game_object.objId].append(addPlainToLoggingDisplay(
+                                self,
+                                str(total_uc_value) + " UC"
+                            ))
 
-                    if game_object.objId not in self.longest_name_dict:
-                        self.total_boost_length_dict[
-                            game_object.objId
-                        ] = self.total_boost_length
-
+                    if game_object.objId not in self.chest_length_dict:
+                        self.chest_length_dict[game_object.objId] = chest_length
         else:
             # We exited from a subworld and need to cleanup
             if not self.is_home:
@@ -471,7 +494,7 @@ class Plugin(PluginBase):
                 self.new_subworld = False
 
                 self.display_dict = {}
-                self.total_boost_length_dict = {}
+                self.chest_length_dict = {}
                 self.total_boosts_dict = {}
 
         self.draw = True
@@ -517,28 +540,28 @@ class Plugin(PluginBase):
                     # Base display [ [1**] [] [] ]
                     displays.append(GraphicWindow(self.refs))
                     
-                    max_item_base = 15
+                    max_item_base = 20
                     
                     display_index = 0
                     panel_group_number = 0
                     text_element_index = 0
-                    chest_length = 0
+                    # chest_length = 0
                     total_displays = 0
 
-                    for element in self.display_dict[game_object.objId]:
-                        if len(element["boosts"]) > 0:
-                            for boost_elements in element["boosts"]:
-                                chest_length += 1
-                        chest_length += 1
+                    # for element in self.display_dict[game_object.objId]:
+                    #     if len(element["boosts"]) > 0:
+                    #         for boost_elements in element["boosts"]:
+                    #             chest_length += 1
+                    #     chest_length += 1
 
-                    if (chest_length <= max_item_base):
+                    if (self.chest_length_dict[game_object.objId] <= max_item_base):
                         total_displays = 1
-                    elif (chest_length <= (max_item_base * 2)):
+                    elif (self.chest_length_dict[game_object.objId] <= (max_item_base * 2)):
                         total_displays = 2
                     else:
                         total_displays = 3
                     
-                    max_item_display = max_item_base if total_displays == 1 else int(chest_length / total_displays)
+                    max_item_display = max_item_base if total_displays == 1 else int(self.chest_length_dict[game_object.objId] / total_displays)
 
                     for index, element in enumerate(self.display_dict[game_object.objId]):
                         if (text_element_index >= max_item_display):
@@ -550,9 +573,10 @@ class Plugin(PluginBase):
                             text_element_index += 1
 
                             displays[display_index].addLabel(element["item"]["text"])
-                            if (text_element_index < max_item_display and index != len(self.display_dict[game_object.objId]) - 1): 
-                                # First check to see if we are not on the max display
-                                # Second, check to see if we are at the end of the display dict list
+
+                             # First check to see if we are not on the max display
+                            # Second, check to see if we are at the end of the display dict list
+                            if text_element_index < max_item_display and index != len(self.display_dict[game_object.objId]) - 1: 
                                 displays[display_index].addPanelDivider() 
                             
                             
@@ -578,7 +602,7 @@ class Plugin(PluginBase):
                             # First check to see if we are not on the max display
                             # Second, check to see if we overflow on max display
                             # Third, check to see if we are at the end of the display dict list
-                            if (text_element_index < max_item_display) and index != len(self.display_dict[game_object.objId]) - 1: 
+                            if text_element_index < max_item_display and index != len(self.display_dict[game_object.objId]) - 1: 
                                 panel_group.addPanelDivider()
 
                             displays[display_index].addPanelGroup(panel_group)
@@ -629,6 +653,16 @@ def reFieldToList(rf, itemtype=None):
             lst[e] = ffi.cast(itemtype, lst[e])
     return lst
 
+
+def addPlainToLoggingDisplay(self, string):
+    return {
+        "item": {
+            "text": string,
+            "size": self.config.scd_text_display_size,
+            "label_colour": 0xFFFFFF,
+        },
+        "boosts": [],
+    }
 
 def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts):
     boosts_list = []
