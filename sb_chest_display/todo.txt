@@ -1,7 +1,7 @@
 [x] (Visual Bug) HR bar issue with boosted items and regular items (Redo logic)
-[] (Feature) Filter by boost
-[] (Feature) Filter by item
-    [] Filter for only specific items
-    [] Remove filter of specific items
+[-] (Feature) Filter by boost ( WIP - need to think about more )
+[x] (Feature) Filter by item
+    [x] Filter for only specific items
+    [x] Remove filter of specific items
 [x] (Feature) Sum up total EC/UC from the chest into a single point
 [] (Feature) Have display fade/ turn off when you are close to it

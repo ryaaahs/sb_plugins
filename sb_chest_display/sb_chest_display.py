@@ -1,20 +1,24 @@
 import logging
 import os
-import util
 import json
 
 from sb_gui import *
 
-# from plugins.sb_gui import *
-
 from enum import Enum
 from _remote import ffi, lib
 from manager import PluginBase
+import util
 
 BASEDIR = os.path.split(os.path.dirname(__file__))[0]
+SB_CHEST_DISPLAY_FILTER_FOLDER = BASEDIR + '\\sbdisplayfilters'
+
 
 ITEMS_JSON = BASEDIR + "\\items.json"
 BOOSTS_JSON = BASEDIR + "\\boosts.json"
+DEBUG_LOGPATH = BASEDIR + '\\scd_debug.txt'
+REMOVE_FILTER_TXT = SB_CHEST_DISPLAY_FILTER_FOLDER + '\\sb_chest_display_remove_filter.txt'
+DISPLAY_FILTER_TXT = SB_CHEST_DISPLAY_FILTER_FOLDER + '\\sb_chest_display_display_filter.txt'
+
 DEBUG_MODE = False
 
 ITEM_MODS = [
@@ -23,7 +27,7 @@ ITEM_MODS = [
     "Custom",
     "Experimental",
     "Prototype",
-]
+] 
 
 # Zones that we're ignoring
 IGNORED_ZONE = ("home", "lobby")
@@ -368,8 +372,40 @@ class Plugin(PluginBase):
             {
                 "scd_display_box": True,
                 "scd_ec_uc_compress": True,
+                "scd_remove_filter": False,
+                "scd_display_filter": False,
             },
         )
+
+        # Check if both filters are on, if so toggle off the display filter
+        if (self.config.scd_remove_filter and self.config.scd_display_filter):
+            self.config.scd_display_filter = False
+
+        
+        if not os.path.exists(SB_CHEST_DISPLAY_FILTER_FOLDER):
+            os.makedirs(SB_CHEST_DISPLAY_FILTER_FOLDER)
+
+        # Check if the filter files exist
+        if not os.path.exists(REMOVE_FILTER_TXT):
+            with open(REMOVE_FILTER_TXT, "w"):
+                pass
+            if DEBUG_MODE:
+                logging.info("~~~~~~~~~~~~~~")
+                logging.info("Remove Filter File has been created")
+        elif DEBUG_MODE:
+                logging.info("~~~~~~~~~~~~~~")
+                logging.info("Remove Filter File has not been created")
+
+        if not os.path.exists(DISPLAY_FILTER_TXT):
+            with open(DISPLAY_FILTER_TXT, "w"):
+                pass
+            if DEBUG_MODE:
+                logging.info("~~~~~~~~~~~~~~")
+                logging.info("Display Filter File has been created")
+        elif DEBUG_MODE:
+                logging.info("~~~~~~~~~~~~~~")
+                logging.info("Display Filter File has not been created")        
+
 
         # Set variables
         self.draw = False
@@ -384,6 +420,31 @@ class Plugin(PluginBase):
         self.longest_name_dict = {}
         self.chest_length_dict = {}
         self.current_floor_chests_ids = []
+        self.remove_filter = []
+        self.display_filter = []
+
+        if (self.config.scd_remove_filter):
+            with open(REMOVE_FILTER_TXT, "r") as filter_file:
+                lines = filter_file.readlines()
+                filters = []
+
+                for l in lines:
+                    filters.append(l.replace("\n", ""))
+
+                self.remove_filter = filters
+
+        elif (self.config.scd_display_filter):
+            with open(DISPLAY_FILTER_TXT, "r") as filter_file:
+                lines = filter_file.readlines()
+                filters = []
+
+                for l in lines:
+                    filters.append(l.replace("\n", ""))
+
+                self.display_filter = filters
+
+        logging.info(self.remove_filter)
+        logging.info(self.display_filter)
 
         # Load the json items
         with open(ITEMS_JSON, "r") as items:
@@ -423,7 +484,6 @@ class Plugin(PluginBase):
                     total_ec_value = 0
                     total_uc_value = 0
 
-
                     chest = ffi.cast("struct Chest *", game_object)
 
                     if game_object.objId not in self.current_floor_chests_ids:
@@ -437,6 +497,14 @@ class Plugin(PluginBase):
                         ):
 
                             loot_item = self.item_list.get(item.type)
+                            item_name = loot_item.get("name")
+
+                            if (self.config.scd_remove_filter):
+                                if item_name in self.remove_filter:
+                                    continue
+                            elif (self.config.scd_display_filter):
+                                if item_name not in self.display_filter:
+                                    continue
 
                             if DEBUG_MODE:
                                 logging.info(self.item_list.get(item.type))
@@ -447,7 +515,6 @@ class Plugin(PluginBase):
                             )
 
                             if (self.config.scd_ec_uc_compress):
-                                item_name = loot_item.get("name")
                                 if "EC" in item_name:
                                     total_ec_value += int(item_name.split(' ', 1)[0])
                                     continue
