@@ -5,3 +5,4 @@
     [x] Remove filter of specific items
 [x] (Feature) Sum up total EC/UC from the chest into a single point
 [] (Feature) Have display fade/ turn off when you are close to it
+[] (Bug) EC/UC compression would fail if using filters

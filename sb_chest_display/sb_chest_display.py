@@ -9,28 +9,47 @@ from _remote import ffi, lib
 from manager import PluginBase
 import util
 
-BASEDIR = os.path.split(os.path.dirname(__file__))[0]
-SB_CHEST_DISPLAY_FILTER_FOLDER = BASEDIR + '\\sbdisplayfilters'
+DEBUG_MODE = False
 
+BASEDIR = os.path.split(os.path.dirname(__file__))[0]
 
 ITEMS_JSON = BASEDIR + "\\items.json"
 BOOSTS_JSON = BASEDIR + "\\boosts.json"
 DEBUG_LOGPATH = BASEDIR + '\\scd_debug.txt'
-REMOVE_FILTER_TXT = SB_CHEST_DISPLAY_FILTER_FOLDER + '\\sb_chest_display_remove_filter.txt'
-DISPLAY_FILTER_TXT = SB_CHEST_DISPLAY_FILTER_FOLDER + '\\sb_chest_display_display_filter.txt'
 
-DEBUG_MODE = False
-
+#TODO Get information from CPP Header than defining within the file
 ITEM_MODS = [
     "",
     "Modified",
     "Custom",
     "Experimental",
     "Prototype",
-] 
+]
 
 # Zones that we're ignoring
-IGNORED_ZONE = ("home", "lobby")
+IGNORED_ZONE = [ 
+    "home", 
+    "lobby"
+]
+
+# You can only have one filter type at a time (base filter if both are enabled is remove) 
+
+# Remove filter removes the items within the list you defined
+# If enabled and the list is empty, the logic will not remove any items from the gui display
+remove_filter_list = [
+    # Format
+    # "Kantikoy Repeater",
+    # "Jansky Repeater"
+    "Empowered Blast"
+]
+
+# Display filter only displays the items within the list you defined
+# If enabled and the list is empty, the gui will display nothing
+display_filter_list = [
+    # Format
+    # "Kantikoy Repeater",
+    # "Jansky Repeater"
+]
 
 class Graphic:  # make subclass of PluginBase?
     def __init__(self, refs):
@@ -381,32 +400,6 @@ class Plugin(PluginBase):
         if (self.config.scd_remove_filter and self.config.scd_display_filter):
             self.config.scd_display_filter = False
 
-        
-        if not os.path.exists(SB_CHEST_DISPLAY_FILTER_FOLDER):
-            os.makedirs(SB_CHEST_DISPLAY_FILTER_FOLDER)
-
-        # Check if the filter files exist
-        if not os.path.exists(REMOVE_FILTER_TXT):
-            with open(REMOVE_FILTER_TXT, "w"):
-                pass
-            if DEBUG_MODE:
-                logging.info("~~~~~~~~~~~~~~")
-                logging.info("Remove Filter File has been created")
-        elif DEBUG_MODE:
-                logging.info("~~~~~~~~~~~~~~")
-                logging.info("Remove Filter File has not been created")
-
-        if not os.path.exists(DISPLAY_FILTER_TXT):
-            with open(DISPLAY_FILTER_TXT, "w"):
-                pass
-            if DEBUG_MODE:
-                logging.info("~~~~~~~~~~~~~~")
-                logging.info("Display Filter File has been created")
-        elif DEBUG_MODE:
-                logging.info("~~~~~~~~~~~~~~")
-                logging.info("Display Filter File has not been created")        
-
-
         # Set variables
         self.draw = False
         self.is_home = False
@@ -420,31 +413,9 @@ class Plugin(PluginBase):
         self.longest_name_dict = {}
         self.chest_length_dict = {}
         self.current_floor_chests_ids = []
-        self.remove_filter = []
-        self.display_filter = []
-
-        if (self.config.scd_remove_filter):
-            with open(REMOVE_FILTER_TXT, "r") as filter_file:
-                lines = filter_file.readlines()
-                filters = []
-
-                for l in lines:
-                    filters.append(l.replace("\n", ""))
-
-                self.remove_filter = filters
-
-        elif (self.config.scd_display_filter):
-            with open(DISPLAY_FILTER_TXT, "r") as filter_file:
-                lines = filter_file.readlines()
-                filters = []
-
-                for l in lines:
-                    filters.append(l.replace("\n", ""))
-
-                self.display_filter = filters
-
-        logging.info(self.remove_filter)
-        logging.info(self.display_filter)
+        
+        logging.info(remove_filter_list)
+        logging.info(display_filter_list)
 
         # Load the json items
         with open(ITEMS_JSON, "r") as items:
@@ -500,10 +471,10 @@ class Plugin(PluginBase):
                             item_name = loot_item.get("name")
 
                             if (self.config.scd_remove_filter):
-                                if item_name in self.remove_filter:
+                                if item_name in remove_filter_list:
                                     continue
                             elif (self.config.scd_display_filter):
-                                if item_name not in self.display_filter:
+                                if item_name not in display_filter_list:
                                     continue
 
                             if DEBUG_MODE:
@@ -612,14 +583,7 @@ class Plugin(PluginBase):
                     display_index = 0
                     panel_group_number = 0
                     text_element_index = 0
-                    # chest_length = 0
                     total_displays = 0
-
-                    # for element in self.display_dict[game_object.objId]:
-                    #     if len(element["boosts"]) > 0:
-                    #         for boost_elements in element["boosts"]:
-                    #             chest_length += 1
-                    #     chest_length += 1
 
                     if (self.chest_length_dict[game_object.objId] <= max_item_base):
                         total_displays = 1
@@ -641,11 +605,10 @@ class Plugin(PluginBase):
 
                             displays[display_index].addLabel(element["item"]["text"])
 
-                             # First check to see if we are not on the max display
+                            # First check to see if we are not on the max display
                             # Second, check to see if we are at the end of the display dict list
                             if text_element_index < max_item_display and index != len(self.display_dict[game_object.objId]) - 1: 
                                 displays[display_index].addPanelDivider() 
-                            
                             
                         else:
                             panel_group_number += 1
@@ -665,10 +628,10 @@ class Plugin(PluginBase):
                                 text_element_index += 1 
                                 panel_group.addLabel(
                                     boost_elements["text"], 1, boost_elements["colour"]
-                                )   
+                            )   
+
                             # First check to see if we are not on the max display
                             # Second, check to see if we overflow on max display
-                            # Third, check to see if we are at the end of the display dict list
                             if text_element_index < max_item_display and index != len(self.display_dict[game_object.objId]) - 1: 
                                 panel_group.addPanelDivider()
 
