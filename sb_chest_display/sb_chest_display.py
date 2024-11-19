@@ -59,12 +59,11 @@ remove_filter_list = [
 
 # Display filter only displays the items within the list you defined
 # If enabled and the list is empty, the gui will display nothing
-display_filter_list = [""
+display_filter_list = [
     # Format
     # "Kantikoy Repeater",
     # "Jansky Repeater"
 ]
-
 
 class Graphic:  # make subclass of PluginBase?
     def __init__(self, refs):
