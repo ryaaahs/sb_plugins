@@ -32,7 +32,22 @@ IGNORED_ZONE = [
     "lobby"
 ]
 
-# You can only have one filter type at a time (base filter if both are enabled is remove) 
+EC_LIST = [
+    "1 EC",
+    "5 EC",
+    "10 EC",
+    "25 EC"
+]
+
+UC_LIST = [
+    "1 UC", 
+    "5 UC"
+]
+
+# You can only have one filter type at a time (base filter if both are enabled is remove).
+# If EC/UC compression is on, use the following names within the filter lists to display/remove it
+# "EC"
+# "UC"
 
 # Remove filter removes the items within the list you defined
 # If enabled and the list is empty, the logic will not remove any items from the gui display
@@ -40,16 +55,16 @@ remove_filter_list = [
     # Format
     # "Kantikoy Repeater",
     # "Jansky Repeater"
-    "Empowered Blast"
 ]
 
 # Display filter only displays the items within the list you defined
 # If enabled and the list is empty, the gui will display nothing
-display_filter_list = [
+display_filter_list = [""
     # Format
     # "Kantikoy Repeater",
     # "Jansky Repeater"
 ]
+
 
 class Graphic:  # make subclass of PluginBase?
     def __init__(self, refs):
@@ -414,9 +429,6 @@ class Plugin(PluginBase):
         self.chest_length_dict = {}
         self.current_floor_chests_ids = []
         
-        logging.info(remove_filter_list)
-        logging.info(display_filter_list)
-
         # Load the json items
         with open(ITEMS_JSON, "r") as items:
             self.item_list = json.load(items)
@@ -471,11 +483,42 @@ class Plugin(PluginBase):
                             item_name = loot_item.get("name")
 
                             if (self.config.scd_remove_filter):
-                                if item_name in remove_filter_list:
+                                if (self.config.scd_ec_uc_compress):
+                                    if "EC" in item_name:
+                                        if "EC" in remove_filter_list: 
+                                            continue
+                                        total_ec_value += int(item_name.split(' ', 1)[0])
+                                        continue 
+                                    if "UC" in item_name:
+                                        if "UC" in remove_filter_list: 
+                                            continue
+                                        total_uc_value += int(item_name.split(' ', 1)[0])
+                                        continue
+                                    
+                                if (item_name in remove_filter_list):
                                     continue
+
                             elif (self.config.scd_display_filter):
+                                if (self.config.scd_ec_uc_compress):
+                                    if "EC" in item_name and "EC" in display_filter_list: 
+                                        total_ec_value += int(item_name.split(' ', 1)[0])
+                                        continue
+                                    elif "UC" in item_name and "UC" in display_filter_list: 
+                                        total_uc_value += int(item_name.split(' ', 1)[0])
+                                        continue
+                                    elif "EC" in item_name or "UC" in item_name:
+                                        continue
+
                                 if item_name not in display_filter_list:
                                     continue
+                            else: 
+                                if (self.config.scd_ec_uc_compress):
+                                    if "EC" in item_name:
+                                        total_ec_value += int(item_name.split(' ', 1)[0])
+                                        continue
+                                    elif "UC" in item_name:
+                                        total_uc_value += int(item_name.split(' ', 1)[0])
+                                        continue
 
                             if DEBUG_MODE:
                                 logging.info(self.item_list.get(item.type))
@@ -484,14 +527,6 @@ class Plugin(PluginBase):
                             boosts = reFieldToList(
                                 item.statboosts, "struct StatBoost *"
                             )
-
-                            if (self.config.scd_ec_uc_compress):
-                                if "EC" in item_name:
-                                    total_ec_value += int(item_name.split(' ', 1)[0])
-                                    continue
-                                elif "UC" in item_name:
-                                    total_uc_value += int(item_name.split(' ', 1)[0])
-                                    continue
 
                             logging_name = (
                                 ITEM_MODS[len(boosts)] + " " + loot_item.get("name")

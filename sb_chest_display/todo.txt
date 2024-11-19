@@ -1,8 +1,10 @@
 [x] (Visual Bug) HR bar issue with boosted items and regular items (Redo logic)
-[-] (Feature) Filter by boost ( WIP - need to think about more )
 [x] (Feature) Filter by item
     [x] Filter for only specific items
     [x] Remove filter of specific items
+    [] (Feature) Expand to include boosts on items
 [x] (Feature) Sum up total EC/UC from the chest into a single point
+[x] (Bug) EC/UC compression would fail if using filters
 [] (Feature) Have display fade/ turn off when you are close to it
-[] (Bug) EC/UC compression would fail if using filters
+[] (Feature) Item hunting (Different display for this option)
+    [] (Feature) Play a unique sound when getting a special item drop (Name+Boosts) ? Maybe
