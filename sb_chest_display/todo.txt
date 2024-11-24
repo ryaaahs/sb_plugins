@@ -2,7 +2,7 @@
 [x] (Feature) Filter by item
     [x] Filter for only specific items
     [x] Remove filter of specific items
-    [] (Feature) Expand to include boosts on items
+    [x] (Feature) Expand to include boosts on items
 [x] (Feature) Sum up total EC/UC from the chest into a single point
 [x] (Bug) EC/UC compression would fail if using filters
 [] (Feature) Have display fade/ turn off when you are close to it

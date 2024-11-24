@@ -86,7 +86,6 @@ display_filter_list = [
     # {"name": "Jansky Repeater", "mods": []},
     # {"name": "Jansky Repeater", "mods": ["Shots", "Precise"]}
     # -------------------------------------------------------------------
-    
 ]
 
 class Graphic:  # make subclass of PluginBase?
@@ -534,9 +533,8 @@ class Plugin(PluginBase):
                                         total_uc_value += int(item_name.split(' ', 1)[0])
                                         continue
 
-                                if (item_name in wildcard_filter_list):
-                                    continue
-                                elif (len(item_boosts_names) > 0): 
+                                
+                                if (len(item_boosts_names) > 0): 
                                     matched_item = False
 
                                     for filter_item in remove_filter_list:
@@ -556,20 +554,50 @@ class Plugin(PluginBase):
                                     if (matched_item):
                                         matched_item = False
                                         continue
+                                elif (item_name in wildcard_filter_list):
+                                    continue
 
                             elif (self.config.scd_display_filter):
+                                wildcard_filter_list = []
+                                for filter_item in display_filter_list:
+                                    if "mods" not in filter_item:
+                                        wildcard_filter_list.append(filter_item['name'])
+
                                 if (self.config.scd_ec_uc_compress):
-                                    if "EC" in item_name and "EC" in display_filter_list: 
+                                    if "EC" in item_name and "EC" in wildcard_filter_list: 
                                         total_ec_value += int(item_name.split(' ', 1)[0])
                                         continue
-                                    elif "UC" in item_name and "UC" in display_filter_list: 
+                                    elif "UC" in item_name and "UC" in wildcard_filter_list: 
                                         total_uc_value += int(item_name.split(' ', 1)[0])
                                         continue
                                     elif "EC" in item_name or "UC" in item_name:
                                         continue
 
-                                if item_name not in display_filter_list:
+                                
+                                if (len(item_boosts_names) > 0): 
+                                    matched_item = False
+
+                                    for filter_item in display_filter_list:
+                                        item_boosts_names_copy = item_boosts_names
+                                        
+                                        if (item_name == filter_item["name"] and len(filter_item["mods"]) == len(item_boosts_names)):
+                                            for boost in filter_item["mods"]:
+                                                if boost in item_boosts_names:
+                                                    item_boosts_names_copy.remove(boost)
+                                                else: 
+                                                    break
+                                                
+                                            if (item_boosts_names_copy == []):
+                                                matched_item = True
+                                                break;
+                                    
+                                    if (matched_item):
+                                        matched_item = False
+                                    else:
+                                        continue
+                                elif item_name not in wildcard_filter_list:
                                     continue
+
                             else: 
                                 if (self.config.scd_ec_uc_compress):
                                     if "EC" in item_name:
