@@ -46,23 +46,47 @@ UC_LIST = [
 
 # You can only have one filter type at a time (base filter if both are enabled is remove).
 # If EC/UC compression is on, use the following names within the filter lists to display/remove it
-# "EC"
-# "UC"
+# {"name": "EC"}
+# {"name": "UC"}
+# If compression is off, use the following filters:
+# {"name": "1 EC"}
+# {"name": "5 EC"}
+# {"name": "10 EC"}
+# {"name": "25 EC"}
+# {"name": "1 UC"}
+# {"name": "5 UC"}
+
+# Filter options
+# Non mods items need to use the "catch all" filter format
+# -------------------------------------------------------------
+# *Catch all: {"name": "Jansky Repeater"} // All Jansky
+# Case sensitive: {"name": "Jansky Repeater", "mods": []} // Jansky with no mods
+# Case sensitive: {"name": "Jansky Repeater", "mods": ["Shots", "Precise"]} // Jansky with two mods
 
 # Remove filter removes the items within the list you defined
 # If enabled and the list is empty, the logic will not remove any items from the gui display
+# Case sensitive with the information you pass into it 
 remove_filter_list = [
     # Format
-    # "Kantikoy Repeater",
-    # "Jansky Repeater"
+    # {"name": "Jansky Repeater"},
+    # {"name": "Health Boost 1"},
+    # {"name": "Jansky Repeater", "mods": []},
+    # {"name": "Jansky Repeater", "mods": ["Shots", "Precise"]}
+    # -------------------------------------------------------------------
 ]
 
 # Display filter only displays the items within the list you defined
 # If enabled and the list is empty, the gui will display nothing
+
+# Case sensitive with the information you pass into it 
 display_filter_list = [
     # Format
-    # "Kantikoy Repeater",
-    # "Jansky Repeater"
+    # {"name": "Jansky Repeater"},
+    # {"name": "Health Boost 1"},
+    # {"name": "Jansky Repeater", "mods": []},
+    # {"name": "Jansky Repeater", "mods": ["Shots", "Precise"]}
+    # -------------------------------------------------------------------
+    
 ]
 
 class Graphic:  # make subclass of PluginBase?
@@ -479,23 +503,59 @@ class Plugin(PluginBase):
                         ):
 
                             loot_item = self.item_list.get(item.type)
+                            
                             item_name = loot_item.get("name")
+                            item_boosts_names = []
+
+                            # Collect the boosts names to be used within filters
+                            for boost in reFieldToList(item.statboosts, "struct StatBoost *"):
+                                filters = {
+                                    "class": loot_item.get("class"),
+                                    "slot": loot_item.get("slot"),
+                                }
+                                item_filtered_boost = filter_boost(self.boost_list, boost.stat, filters)
+                                item_boosts_names.append(item_filtered_boost["name"])
 
                             if (self.config.scd_remove_filter):
+                                wildcard_filter_list = []
+                                for filter_item in remove_filter_list:
+                                    if "mods" not in filter_item:
+                                        wildcard_filter_list.append(filter_item['name'])
+
                                 if (self.config.scd_ec_uc_compress):
                                     if "EC" in item_name:
-                                        if "EC" in remove_filter_list: 
+                                        if "EC" in wildcard_filter_list: 
                                             continue
                                         total_ec_value += int(item_name.split(' ', 1)[0])
                                         continue 
                                     if "UC" in item_name:
-                                        if "UC" in remove_filter_list: 
+                                        if "UC" in wildcard_filter_list: 
                                             continue
                                         total_uc_value += int(item_name.split(' ', 1)[0])
                                         continue
-                                    
-                                if (item_name in remove_filter_list):
+
+                                if (item_name in wildcard_filter_list):
                                     continue
+                                elif (len(item_boosts_names) > 0): 
+                                    matched_item = False
+
+                                    for filter_item in remove_filter_list:
+                                        item_boosts_names_copy = item_boosts_names
+                                        
+                                        if (item_name == filter_item["name"] and len(filter_item["mods"]) == len(item_boosts_names)):
+                                            for boost in filter_item["mods"]:
+                                                if boost in item_boosts_names:
+                                                    item_boosts_names_copy.remove(boost)
+                                                else: 
+                                                    break
+                                                
+                                            if (item_boosts_names_copy == []):
+                                                matched_item = True
+                                                break;
+                                    
+                                    if (matched_item):
+                                        matched_item = False
+                                        continue
 
                             elif (self.config.scd_display_filter):
                                 if (self.config.scd_ec_uc_compress):
@@ -831,7 +891,6 @@ def filter_boost(boost_list, boost_id, filters):
         if boost.get("id") != boost_id:
             # Skip boosts that do not match the specified boost_id
             continue
-
         match = True
         for key, value in filters.items():
             if key == "slot" or key == "class":
