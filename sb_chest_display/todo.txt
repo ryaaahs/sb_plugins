@@ -8,5 +8,5 @@
 [] (Feature) Item hunting (Different display for this option)
     [] (Feature) Play a unique sound when getting a special item drop (Name+Boosts) ? Maybe
 [] (Bug) Display issue where the background locks to the player camera window
-[] (Feature) Disable display when the player runs ontop of the box (toggle)
-[] (Feature) Disable the display when the player is not near the box (toggle)
+[x] (Feature) Disable display when the player runs ontop of the box (toggle)
+[] (Logic) Correct logic on Display Wildcard, so it enables Wildcards to be searched first and allows other items

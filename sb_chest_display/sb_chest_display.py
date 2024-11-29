@@ -402,10 +402,6 @@ class Plugin(PluginBase):
             {
                 "scd_text_display_size": 15,
                 "scd_max_items_per_box": 20,
-                "scd_width_edge_spacing": 15,  # Default is 15
-                "scd_text_y_spacing": 20,
-                "scd_text_x_padding": 5,
-                "scd_text_y_padding": 5,
             },
         )
 
@@ -422,14 +418,15 @@ class Plugin(PluginBase):
                 "scd_text_prototype_colour": 0xFFF6D291,
             },
         )
-
+    
         self.config.options(
             "bool",
             {
                 "scd_display_box": True,
-                "scd_ec_uc_compress": True,
+                "scd_ec_uc_compress": False,
                 "scd_remove_filter": False,
                 "scd_display_filter": False,
+                "scd_disable_on_walk_over": False,
             },
         )
 
@@ -533,8 +530,9 @@ class Plugin(PluginBase):
                                         total_uc_value += int(item_name.split(' ', 1)[0])
                                         continue
 
-                                
-                                if (len(item_boosts_names) > 0): 
+                                if (item_name in wildcard_filter_list):
+                                    continue
+                                elif (len(item_boosts_names) > 0): 
                                     matched_item = False
 
                                     for filter_item in remove_filter_list:
@@ -554,8 +552,6 @@ class Plugin(PluginBase):
                                     if (matched_item):
                                         matched_item = False
                                         continue
-                                elif (item_name in wildcard_filter_list):
-                                    continue
 
                             elif (self.config.scd_display_filter):
                                 wildcard_filter_list = []
@@ -573,8 +569,7 @@ class Plugin(PluginBase):
                                     elif "EC" in item_name or "UC" in item_name:
                                         continue
 
-                                
-                                if (len(item_boosts_names) > 0): 
+                                if (len(item_boosts_names) > 0):
                                     matched_item = False
 
                                     for filter_item in display_filter_list:
@@ -667,7 +662,7 @@ class Plugin(PluginBase):
         client_world = self.refs.ClientWorld
         world_view = self.refs.WorldView
 
-        if client_world == ffi.NULL or world_view == ffi.NULL:
+        if client_world == ffi.NULL or world_view == ffi.NULL or client_world.player == ffi.NULL:
             return
 
         canvas_width = self.refs.canvasW_[0]
@@ -682,17 +677,21 @@ class Plugin(PluginBase):
                 display_x_spacing = 25
                 display_y_spacing = 15
 
+                player = ffi.cast('struct WorldObject *', client_world.player)
+                player_x = player.props.xmp // 256 + player.props.wmp // 512 - world_view.offset.x
+                player_y = player.props.ymp // 256 - world_view.offset.y
+
                 # Get chest X/Y to base our display off of
-                x = (
+                chest_x = (
                     chest_props.xmp // 256
                     + chest_props.wmp // 512
                     - world_view.offset.x
                 )
-                y = chest_props.ymp // 256 - world_view.offset.y
+                chest_y = chest_props.ymp // 256 - world_view.offset.y
 
                 # Window space coords
-                x = round(x / self.refs.scaleX)
-                y = round(y / self.refs.scaleY)
+                chest_x = round(chest_x / self.refs.scaleX)
+                chest_y = round(chest_y / self.refs.scaleY)
 
                 # Remove display if the user opens the chest
                 if chest.pos == -1:
@@ -700,21 +699,19 @@ class Plugin(PluginBase):
                     # Base display [ [1**] [] [] ]
                     displays.append(GraphicWindow(self.refs))
                     
-                    max_item_base = 20
-                    
                     display_index = 0
                     panel_group_number = 0
                     text_element_index = 0
                     total_displays = 0
 
-                    if (self.chest_length_dict[game_object.objId] <= max_item_base):
+                    if (self.chest_length_dict[game_object.objId] <= self.config.scd_max_items_per_box):
                         total_displays = 1
-                    elif (self.chest_length_dict[game_object.objId] <= (max_item_base * 2)):
+                    elif (self.chest_length_dict[game_object.objId] <= (self.config.scd_max_items_per_box * 2)):
                         total_displays = 2
                     else:
                         total_displays = 3
                     
-                    max_item_display = max_item_base if total_displays == 1 else int(self.chest_length_dict[game_object.objId] / total_displays)
+                    max_item_display = self.config.scd_max_items_per_box if total_displays == 1 else int(self.chest_length_dict[game_object.objId] / total_displays)
 
                     for index, element in enumerate(self.display_dict[game_object.objId]):
                         if (text_element_index >= max_item_display):
@@ -765,31 +762,58 @@ class Plugin(PluginBase):
                     
                     if len(displays) == 1:
                         # Base display [ [1**] [] [] ]
-                        displays[0].reset(x - int(displays[0].w / 2), y - displays[0].h - display_y_spacing)
-                        displays[0].draw()
+                        displays[0].reset(chest_x - int(displays[0].w / 2), chest_y - displays[0].h - display_y_spacing)
+
+                        if (self.config.scd_disable_on_walk_over):
+                            if (not ((player_y >= chest_y - displays[0].h - display_y_spacing) and (player_y <= chest_y - display_y_spacing))
+                                or not ((player_x >= chest_x - int(displays[0].w / 2)) and (player_x <= chest_x + int(displays[0].w / 2)))):
+                                    displays[0].draw()   
+                        else:
+                            displays[0].draw()
+
                     elif len(displays) == 2:
                         # Base display [ [1**] [2**] [] ]
-                        displays[0].reset(x - int(displays[0].w) - int(display_x_spacing / 2), y - displays[0].h - display_y_spacing)
-                        displays[1].reset(x + int(display_x_spacing / 2), y - displays[1].h - display_y_spacing)
+                        displays[0].reset(chest_x - int(displays[0].w) - int(display_x_spacing / 2), chest_y - displays[0].h - display_y_spacing)
+                        displays[1].reset(chest_x + int(display_x_spacing / 2), chest_y - displays[1].h - display_y_spacing)
 
-                        displays[0].draw()
-                        displays[1].draw()
+                        # Get tallest display and use that as a baseline
+                        height = max([displays[0].h, displays[1].h])
+                        
+                        if (self.config.scd_disable_on_walk_over):
+                            if (not ((player_y >= chest_y - height - display_y_spacing) and (player_y <= chest_y - display_y_spacing))
+                                or not ((player_x >= chest_x - int(displays[0].w) - int(display_x_spacing / 2)) and (player_x <= chest_x + int(displays[1].w) + int(display_x_spacing / 2)))):
+                                    displays[0].draw()
+                                    displays[1].draw()   
+                        else:
+                            displays[0].draw()
+                            displays[1].draw()
+
+                        
                     elif len(displays) == 3:
                         # Base display [ [1**] [2**] [3**] ]
-                        displays[0].reset(x - int(displays[0].w) - (chest_props.wmp // 512) - displays[1].w + display_x_spacing, y - displays[0].h - display_y_spacing)
-                        displays[1].reset(x - int(displays[1].w / 2), y - displays[1].h - display_y_spacing)
-                        displays[2].reset(x + (chest_props.wmp // 512) + displays[1].w - display_x_spacing, y - displays[2].h - display_y_spacing)
+                        displays[0].reset(chest_x - int(displays[0].w) - (chest_props.wmp // 1068) - displays[1].w + display_x_spacing, chest_y - displays[0].h - display_y_spacing)
+                        displays[1].reset(chest_x - int(displays[1].w / 2), chest_y - displays[1].h - display_y_spacing)
+                        displays[2].reset(chest_x + (chest_props.wmp // 1068) + displays[1].w - display_x_spacing, chest_y - displays[2].h - display_y_spacing)
 
-                        displays[0].draw()
-                        displays[1].draw()
-                        displays[2].draw()
+                        # Get tallest display and use that as a baseline
+                        height = max([displays[0].h, displays[1].h, displays[2].h])
+
+                        if (self.config.scd_disable_on_walk_over):
+                            if (not ((player_y >= chest_y - height - display_y_spacing) and (player_y <= chest_y - display_y_spacing))
+                                or not ((player_x >= chest_x - int(displays[0].w) - (chest_props.wmp // 1068) - displays[1].w + display_x_spacing) and (player_x <= chest_x + displays[2].w + (chest_props.wmp // 1068) + displays[1].w - display_x_spacing))):
+                                    displays[0].draw()
+                                    displays[1].draw()
+                                    displays[2].draw() 
+                        else:
+                            displays[0].draw()
+                            displays[1].draw()
+                            displays[2].draw()
 
 def writeToDebugFile(test_string):
     with open(DEBUG_LOGPATH, "a") as file:
         file.write(test_string)
         if DEBUG_MODE:
             logging.info("Finished writing to Debug file")
-
 
 def reFieldToList(rf, itemtype=None):
     """
