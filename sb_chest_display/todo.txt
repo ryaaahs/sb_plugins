@@ -5,7 +5,8 @@
     [x] (Feature) Expand to include boosts on items
 [x] (Feature) Sum up total EC/UC from the chest into a single point
 [x] (Bug) EC/UC compression would fail if using filters
-[] (Feature) Have display fade/ turn off when you are close to it
 [] (Feature) Item hunting (Different display for this option)
     [] (Feature) Play a unique sound when getting a special item drop (Name+Boosts) ? Maybe
-[] (Bug) Display issue where the background locks to the player camera window 
+[] (Bug) Display issue where the background locks to the player camera window
+[] (Feature) Disable display when the player runs ontop of the box (toggle)
+[] (Feature) Disable the display when the player is not near the box (toggle)

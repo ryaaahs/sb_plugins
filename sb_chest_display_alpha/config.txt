@@ -1,0 +1,21 @@
+[plugin_sb_chest_display_alpha]
+scda_display_size = 15
+scda_max_items_per_box = 20
+scda_width_edge_spacing = 15
+scda_text_y_spacing = 20
+scda_text_x_padding = 5
+scda_text_y_padding = 5
+
+scda_text_modified_label_colour': 79f071,
+scda_text_custom_label_colour': 3d70f0,
+scda_text_experimental_label_colour': d04ef0,
+scda_text_prototype_label_colour': f0b03d,
+scda_text_modified_colour = 79f071
+scda_text_custom_colour = 638cf3
+scda_text_experimental_colour = de83f4
+scda_text_prototype_colour = f3bf63
+
+scda_display_box = yes
+
+# Under [plugin_keybinds] for display toggle
+sb_chest_display_alpha scda_display_box toggle no yes = Right Alt
