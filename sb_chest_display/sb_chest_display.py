@@ -427,6 +427,7 @@ class Plugin(PluginBase):
                 "scd_remove_filter": False,
                 "scd_display_filter": False,
                 "scd_disable_on_walk_over": False,
+                "scd_enable_on_walk_over": False,
             },
         )
 
@@ -768,6 +769,10 @@ class Plugin(PluginBase):
                             if (not ((player_y >= chest_y - displays[0].h - display_y_spacing) and (player_y <= chest_y - display_y_spacing))
                                 or not ((player_x >= chest_x - int(displays[0].w / 2)) and (player_x <= chest_x + int(displays[0].w / 2)))):
                                     displays[0].draw()   
+                        elif(self.config.scd_enable_on_walk_over):
+                            if (((player_y >= chest_y - displays[0].h - display_y_spacing) and (player_y <= chest_y - display_y_spacing))
+                                and ((player_x >= chest_x - int(displays[0].w / 2)) and (player_x <= chest_x + int(displays[0].w / 2)))):
+                                    displays[0].draw()
                         else:
                             displays[0].draw()
 
@@ -783,7 +788,12 @@ class Plugin(PluginBase):
                             if (not ((player_y >= chest_y - height - display_y_spacing) and (player_y <= chest_y - display_y_spacing))
                                 or not ((player_x >= chest_x - int(displays[0].w) - int(display_x_spacing / 2)) and (player_x <= chest_x + int(displays[1].w) + int(display_x_spacing / 2)))):
                                     displays[0].draw()
-                                    displays[1].draw()   
+                                    displays[1].draw()  
+                        elif(self.config.scd_enable_on_walk_over):
+                            if (((player_y >= chest_y - height - display_y_spacing) and (player_y <= chest_y - display_y_spacing))
+                                and ((player_x >= chest_x - int(displays[0].w) - int(display_x_spacing / 2)) and (player_x <= chest_x + int(displays[1].w) + int(display_x_spacing / 2)))):
+                                    displays[0].draw()
+                                    displays[1].draw() 
                         else:
                             displays[0].draw()
                             displays[1].draw()
@@ -801,6 +811,12 @@ class Plugin(PluginBase):
                         if (self.config.scd_disable_on_walk_over):
                             if (not ((player_y >= chest_y - height - display_y_spacing) and (player_y <= chest_y - display_y_spacing))
                                 or not ((player_x >= chest_x - int(displays[0].w) - (chest_props.wmp // 1068) - displays[1].w + display_x_spacing) and (player_x <= chest_x + displays[2].w + (chest_props.wmp // 1068) + displays[1].w - display_x_spacing))):
+                                    displays[0].draw()
+                                    displays[1].draw()
+                                    displays[2].draw() 
+                        elif(self.config.scd_enable_on_walk_over):
+                            if (((player_y >= chest_y - height - display_y_spacing) and (player_y <= chest_y - display_y_spacing))
+                                and ((player_x >= chest_x - int(displays[0].w) - (chest_props.wmp // 1068) - displays[1].w + display_x_spacing) and (player_x <= chest_x + displays[2].w + (chest_props.wmp // 1068) + displays[1].w - display_x_spacing))):
                                     displays[0].draw()
                                     displays[1].draw()
                                     displays[2].draw() 
