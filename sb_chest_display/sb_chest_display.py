@@ -57,11 +57,11 @@ UC_LIST = [
 # {"name": "5 UC"}
 
 # Filter options
-# Non mods items need to use the "catch all" filter format
+# NOTE: Non modifiers items need to use the "catch all" filter format
 # -------------------------------------------------------------
 # *Catch all: {"name": "Jansky Repeater"} // All Jansky
-# Case sensitive: {"name": "Jansky Repeater", "mods": []} // Jansky with no mods
-# Case sensitive: {"name": "Jansky Repeater", "mods": ["Shots", "Precise"]} // Jansky with two mods
+# Case sensitive: {"name": "Jansky Repeater", "modifiers": []} // Jansky with no modifiers
+# Case sensitive: {"name": "Jansky Repeater", "modifiers": ["Shots", "Precise"]} // Jansky with two modifiers
 
 # Remove filter removes the items within the list you defined
 # If enabled and the list is empty, the logic will not remove any items from the gui display
@@ -70,8 +70,8 @@ remove_filter_list = [
     # Format
     # {"name": "Jansky Repeater"},
     # {"name": "Health Boost 1"},
-    # {"name": "Jansky Repeater", "mods": []},
-    # {"name": "Jansky Repeater", "mods": ["Shots", "Precise"]}
+    # {"name": "Jansky Repeater", "modifiers": []},
+    # {"name": "Jansky Repeater", "modifiers": ["Shots", "Precise"]}
     # -------------------------------------------------------------------
 ]
 
@@ -83,9 +83,27 @@ display_filter_list = [
     # Format
     # {"name": "Jansky Repeater"},
     # {"name": "Health Boost 1"},
-    # {"name": "Jansky Repeater", "mods": []},
-    # {"name": "Jansky Repeater", "mods": ["Shots", "Precise"]}
+    # {"name": "Jansky Repeater", "modifiers": []},
+    # {"name": "Jansky Repeater", "modifiers": ["Shots", "Precise"]}
     # -------------------------------------------------------------------
+]
+
+# Perf tracking allows you to track specific items and give them a varient name (DPS/ COMB/ Range...)
+# These items appear differently than others and can be customized within the config.ini
+# When getting one of these items it will be displayed as X Name, where X is the varient name
+# Name: Full name of the item (case sensitive)
+# variant: varient name (DPS/ COMB/ Range...)
+# tracking: enable or disable the tracking (True/False)
+# modifiers: mods to track
+
+# Create your own or use the ones within items_groups folder
+
+# NOTE: Please keep in mind that filters affect the display of perf tracking. Be mindful of that when creating your filters!
+perf_tracking = [
+    # Format
+    # {"name": "Jansky Repeater", "variant": "DPS", "tracking": True, "modifiers": ["Shot", "Armor Piercing", "Penetrating", "Explosive Ammo"]},
+    # {"name": "Jansky Repeater", "variant": "COMB", "tracking": True, "modifiers": ["Shots", "Range", "Penetrating", "Explosive Ammo"]},
+    # {"name": "Jansky Repeater", "variant": "Range", "tracking": True, "modifiers": ["Shots", "Armor Piercing", "Penetrating", "Range"]},
 ]
 
 class Graphic:  # make subclass of PluginBase?
@@ -412,10 +430,12 @@ class Plugin(PluginBase):
                 "scd_text_custom_label_colour": 0xFF3D70F0,
                 "scd_text_experimental_label_colour": 0xFFD04EF0,
                 "scd_text_prototype_label_colour": 0xFFF0B03D,
+                "scd_text_perf_item_label_colour": 0xFFD22B2B, 
                 "scd_text_modified_colour": 0xFF79F071,
                 "scd_text_custom_colour": 0xFF638CF3,
                 "scd_text_experimental_colour": 0xFFDE83F4,
                 "scd_text_prototype_colour": 0xFFF6D291,
+                "scd_text_perf_item_prototype_colour": 0xFFDF6A6A, 
             },
         )
     
@@ -428,6 +448,7 @@ class Plugin(PluginBase):
                 "scd_display_filter": False,
                 "scd_disable_on_walk_over": False,
                 "scd_enable_on_walk_over": False,
+                "scd_equal_chest_display": False
             },
         )
 
@@ -500,9 +521,9 @@ class Plugin(PluginBase):
                         ):
 
                             loot_item = self.item_list.get(item.type)
-                            
                             item_name = loot_item.get("name")
                             item_boosts_names = []
+                            perf_item_match = False
 
                             # Collect the boosts names to be used within filters
                             for boost in reFieldToList(item.statboosts, "struct StatBoost *"):
@@ -513,10 +534,26 @@ class Plugin(PluginBase):
                                 item_filtered_boost = filter_boost(self.boost_list, boost.stat, filters)
                                 item_boosts_names.append(item_filtered_boost["name"])
 
+                            # Check for PERF items
+                            for perf_item in perf_tracking:
+                                item_boosts_names_copy = item_boosts_names
+                                
+                                if (item_name == perf_item["name"] and len(perf_item["modifiers"]) == len(item_boosts_names) and perf_item['tracking']):
+                                    for boost in perf_item["modifiers"]:
+                                        if boost in item_boosts_names:
+                                            item_boosts_names_copy.remove(boost)
+                                        else: 
+                                            break
+                                        # We have a match!
+                                        perf_item_match = True
+                                        item_name = perf_item["variant"] + " " + loot_item.get("name")
+                                        
+
+
                             if (self.config.scd_remove_filter):
                                 wildcard_filter_list = []
                                 for filter_item in remove_filter_list:
-                                    if "mods" not in filter_item:
+                                    if "modifiers" not in filter_item:
                                         wildcard_filter_list.append(filter_item['name'])
 
                                 if (self.config.scd_ec_uc_compress):
@@ -539,8 +576,8 @@ class Plugin(PluginBase):
                                     for filter_item in remove_filter_list:
                                         item_boosts_names_copy = item_boosts_names
                                         
-                                        if (item_name == filter_item["name"] and len(filter_item["mods"]) == len(item_boosts_names)):
-                                            for boost in filter_item["mods"]:
+                                        if (item_name == filter_item["name"] and len(filter_item["modifiers"]) == len(item_boosts_names)):
+                                            for boost in filter_item["modifiers"]:
                                                 if boost in item_boosts_names:
                                                     item_boosts_names_copy.remove(boost)
                                                 else: 
@@ -557,7 +594,7 @@ class Plugin(PluginBase):
                             elif (self.config.scd_display_filter):
                                 wildcard_filter_list = []
                                 for filter_item in display_filter_list:
-                                    if "mods" not in filter_item:
+                                    if "modifiers" not in filter_item:
                                         wildcard_filter_list.append(filter_item['name'])
 
                                 if (self.config.scd_ec_uc_compress):
@@ -576,8 +613,8 @@ class Plugin(PluginBase):
                                     for filter_item in display_filter_list:
                                         item_boosts_names_copy = item_boosts_names
                                         
-                                        if (item_name == filter_item["name"] and len(filter_item["mods"]) == len(item_boosts_names)):
-                                            for boost in filter_item["mods"]:
+                                        if (item_name == filter_item["name"] and len(filter_item["modifiers"]) == len(item_boosts_names)):
+                                            for boost in filter_item["modifiers"]:
                                                 if boost in item_boosts_names:
                                                     item_boosts_names_copy.remove(boost)
                                                 else: 
@@ -611,11 +648,14 @@ class Plugin(PluginBase):
                                 item.statboosts, "struct StatBoost *"
                             )
 
-                            logging_name = (
-                                ITEM_MODS[len(boosts)] + " " + loot_item.get("name")
-                                if len(boosts) > 0
-                                else loot_item.get("name")
-                            )
+                            if perf_item_match: 
+                                logging_name = item_name
+                            else: 
+                                logging_name = (
+                                    ITEM_MODS[len(boosts)] + " " + loot_item.get("name")
+                                    if len(boosts) > 0
+                                    else loot_item.get("name")
+                                )
 
                             item_display_name = addItemToLoggingDisplay(
                                 self,
@@ -623,6 +663,7 @@ class Plugin(PluginBase):
                                 logging_name,
                                 len(boosts),
                                 item.statboosts,
+                                perf_item_match
                             )
 
                             chest_length += len(boosts) + 1 if len(boosts) > 0 else 1
@@ -704,18 +745,22 @@ class Plugin(PluginBase):
                     panel_group_number = 0
                     text_element_index = 0
                     total_displays = 0
+                    chest_length = self.chest_length_dict[game_object.objId]
 
-                    if (self.chest_length_dict[game_object.objId] <= self.config.scd_max_items_per_box):
+                    if (chest_length <= self.config.scd_max_items_per_box):
                         total_displays = 1
-                    elif (self.chest_length_dict[game_object.objId] <= (self.config.scd_max_items_per_box * 2)):
+                    elif (chest_length <= (self.config.scd_max_items_per_box * 2)):
                         total_displays = 2
                     else:
                         total_displays = 3
-                    
-                    max_item_display = self.config.scd_max_items_per_box if total_displays == 1 else int(self.chest_length_dict[game_object.objId] / total_displays)
+
+                    max_item_display = self.config.scd_max_items_per_box 
+
+                    if (self.config.scd_equal_chest_display and total_displays > 1):
+                        max_item_display = int(chest_length / total_displays)
 
                     for index, element in enumerate(self.display_dict[game_object.objId]):
-                        if (text_element_index >= max_item_display):
+                        if (text_element_index >= max_item_display and display_index != total_displays - 1):
                             displays.append(GraphicWindow(self.refs))
                             display_index += 1
                             text_element_index = 0
@@ -727,7 +772,9 @@ class Plugin(PluginBase):
 
                             # First check to see if we are not on the max display
                             # Second, check to see if we are at the end of the display dict list
-                            if text_element_index < max_item_display and index != len(self.display_dict[game_object.objId]) - 1: 
+                            if (display_index == total_displays - 1 and index != len(self.display_dict[game_object.objId]) - 1):
+                                displays[display_index].addPanelDivider() 
+                            elif text_element_index < max_item_display and index != len(self.display_dict[game_object.objId]) - 1: 
                                 displays[display_index].addPanelDivider() 
                             
                         else:
@@ -752,7 +799,9 @@ class Plugin(PluginBase):
 
                             # First check to see if we are not on the max display
                             # Second, check to see if we overflow on max display
-                            if text_element_index < max_item_display and index != len(self.display_dict[game_object.objId]) - 1: 
+                            if (display_index == total_displays - 1 and index != len(self.display_dict[game_object.objId]) - 1):
+                                panel_group.addPanelDivider()
+                            elif text_element_index < max_item_display and index != len(self.display_dict[game_object.objId]) - 1: 
                                 panel_group.addPanelDivider()
 
                             displays[display_index].addPanelGroup(panel_group)
@@ -856,7 +905,7 @@ def addPlainToLoggingDisplay(self, string):
         "boosts": [],
     }
 
-def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts):
+def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_item):
     boosts_list = []
     label_colour = 0xFFFFFF
     boost_colour = 0xFFFFFF
@@ -864,19 +913,25 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts):
     # Item
     item_size = self.config.scd_text_display_size
     item_text = name
+
+    if perf_item:
+        label_colour = self.config.scd_text_perf_item_label_colour
+        boost_colour = self.config.scd_text_perf_item_prototype_colour
+
     if boost_length != -1:
-        if boost_length == 1:
-            label_colour = self.config.scd_text_modified_label_colour
-            boost_colour = self.config.scd_text_modified_colour
-        if boost_length == 2:
-            label_colour = self.config.scd_text_custom_label_colour
-            boost_colour = self.config.scd_text_custom_colour
-        if boost_length == 3:
-            label_colour = self.config.scd_text_experimental_label_colour
-            boost_colour = self.config.scd_text_experimental_colour
-        if boost_length == 4:
-            label_colour = self.config.scd_text_prototype_label_colour
-            boost_colour = self.config.scd_text_prototype_colour
+        if not perf_item:
+            if boost_length == 1:
+                label_colour = self.config.scd_text_modified_label_colour
+                boost_colour = self.config.scd_text_modified_colour
+            if boost_length == 2:
+                label_colour = self.config.scd_text_custom_label_colour
+                boost_colour = self.config.scd_text_custom_colour
+            if boost_length == 3:
+                label_colour = self.config.scd_text_experimental_label_colour
+                boost_colour = self.config.scd_text_experimental_colour
+            if boost_length == 4:
+                label_colour = self.config.scd_text_prototype_label_colour
+                boost_colour = self.config.scd_text_prototype_colour
 
         item_color = label_colour
 
