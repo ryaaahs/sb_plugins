@@ -149,9 +149,9 @@ class Graphic:  # make subclass of PluginBase?
         self.refs.canvasH_[0] = self.refs.windowH
 
         if type(self.fill_rect) == "str":
-            self.fill_rect = int(str(fill_rect), 16)
+            self.fill_rect = int(str(self.fill_rect), 16)
         if type(self.draw_rect) == "str":
-            self.draw_rect = int(str(draw_rect), 16)
+            self.draw_rect = int(str(self.draw_rect), 16)
 
         self.refs.XDL_FillRect(
             self.x, self.y, self.w, self.h, self.fill_rect, self.fill_rect_blend
@@ -161,6 +161,12 @@ class Graphic:  # make subclass of PluginBase?
         y = self.y if self.draw_bottom_border == True else 0
         w = self.w if self.draw_right_border == True else 0
         h = self.h if self.draw_left_border == True else 0
+
+        if DEBUG_MODE:
+            test = util.PlainText(font='HemiHeadBold')
+            test.size = 15
+            test.text = "x"
+            test.draw(x, y, anchorX=0.5, anchorY=0.5)
 
         self.refs.XDL_DrawRect(x, y, w, h, self.draw_rect, self.fill_rect_blend)
 
@@ -420,6 +426,8 @@ class Plugin(PluginBase):
             {
                 "scd_text_display_size": 15,
                 "scd_max_items_per_box": 20,
+                "scd_display_x_spacing": 25, 
+                "scd_display_y_spacing": 15,
             },
         )
 
@@ -716,14 +724,7 @@ class Plugin(PluginBase):
 
                 chest = ffi.cast("struct Chest *", game_object)
                 chest_props = game_object.props
-                display_x_spacing = 25
-                display_y_spacing = 15
 
-                player = ffi.cast('struct WorldObject *', client_world.player)
-                player_x = player.props.xmp // 256 + player.props.wmp // 512 - world_view.offset.x
-                player_y = player.props.ymp // 256 - world_view.offset.y
-
-                # Get chest X/Y to base our display off of
                 chest_x = (
                     chest_props.xmp // 256
                     + chest_props.wmp // 512
@@ -731,9 +732,29 @@ class Plugin(PluginBase):
                 )
                 chest_y = chest_props.ymp // 256 - world_view.offset.y
 
-                # Window space coords
+                # Correct Window space coords when changing the zoom level
                 chest_x = round(chest_x / self.refs.scaleX)
                 chest_y = round(chest_y / self.refs.scaleY)
+
+                player = ffi.cast('struct WorldObject *', client_world.player)
+                player_x = player.props.xmp // 256 + player.props.wmp // 512 - world_view.offset.x
+                player_y = player.props.ymp // 256 - world_view.offset.y
+
+                # Correct Window space coords when changing the zoom level
+                player_x = round(player_x / self.refs.scaleX)
+                player_y = round(player_y / self.refs.scaleY)
+
+                if DEBUG_MODE:
+                    # Place a visual marker onto the player and chest
+                    player_marker = util.PlainText(font='HemiHeadBold')
+                    player_marker.size = 20
+                    player_marker.text = "p"
+                    player_marker.draw(player_x, player_y, anchorX=0.5, anchorY=0.5)
+
+                    chest_marker = util.PlainText(font='HemiHeadBold')
+                    chest_marker.size = 20
+                    chest_marker.text = "c"
+                    chest_marker.draw(chest_x, chest_y, anchorX=0.5, anchorY=0.5)
 
                 # Remove display if the user opens the chest
                 if chest.pos == -1:
@@ -812,35 +833,102 @@ class Plugin(PluginBase):
                     
                     if len(displays) == 1:
                         # Base display [ [1**] [] [] ]
-                        displays[0].reset(chest_x - int(displays[0].w / 2), chest_y - displays[0].h - display_y_spacing)
+                        display_one_x = chest_x - int(displays[0].w / 2)
+                        display_one_y = chest_y - displays[0].h - self.config.scd_display_y_spacing
+
+                        touch_box_y1 = display_one_y
+                        touch_box_y2 = chest_y - self.config.scd_display_y_spacing
+                        touch_box_x1 = display_one_x
+                        touch_box_x2 = display_one_x + displays[0].w
+                        
+                        displays[0].reset(display_one_x, display_one_y)
+
+                        if DEBUG_MODE:
+                            # Place visual markers for touch box
+                            x1y1 = util.PlainText(font='HemiHeadBold')
+                            x1y1.size = 20
+                            x1y1.text = "x1y1"
+                            x1y1.draw(touch_box_x1, touch_box_y1, anchorX=0.5, anchorY=0.5)
+
+                            x2y1 = util.PlainText(font='HemiHeadBold')
+                            x2y1.size = 20
+                            x2y1.text = "x2y1"
+                            x2y1.draw(touch_box_x2, touch_box_y1, anchorX=0.5, anchorY=0.5)
+
+                            x1y2 = util.PlainText(font='HemiHeadBold')
+                            x1y2.size = 20
+                            x1y2.text = "x1y2"
+                            x1y2.draw(touch_box_x1, touch_box_y2, anchorX=0.5, anchorY=0.5)
+ 
+                            x2y2 = util.PlainText(font='HemiHeadBold')
+                            x2y2.size = 20
+                            x2y2.text = "x2y2"
+                            x2y2.draw(touch_box_x2, touch_box_y2, anchorX=0.5, anchorY=0.5)
 
                         if (self.config.scd_disable_on_walk_over):
-                            if (not ((player_y >= chest_y - displays[0].h - display_y_spacing) and (player_y <= chest_y - display_y_spacing))
-                                or not ((player_x >= chest_x - int(displays[0].w / 2)) and (player_x <= chest_x + int(displays[0].w / 2)))):
+                            if (not ((player_y >= touch_box_y1) and (player_y <= touch_box_y2))
+                                or not ((player_x >= touch_box_x1) and (player_x <= touch_box_x2))):
                                     displays[0].draw()   
                         elif(self.config.scd_enable_on_walk_over):
-                            if (((player_y >= chest_y - displays[0].h - display_y_spacing) and (player_y <= chest_y - display_y_spacing))
-                                and ((player_x >= chest_x - int(displays[0].w / 2)) and (player_x <= chest_x + int(displays[0].w / 2)))):
+                            if (((player_y >= touch_box_y1) and (player_y <= touch_box_y2))
+                                and ((player_x >= touch_box_x1) and (player_x <= touch_box_x2))):
                                     displays[0].draw()
                         else:
                             displays[0].draw()
 
                     elif len(displays) == 2:
                         # Base display [ [1**] [2**] [] ]
-                        displays[0].reset(chest_x - int(displays[0].w) - int(display_x_spacing / 2), chest_y - displays[0].h - display_y_spacing)
-                        displays[1].reset(chest_x + int(display_x_spacing / 2), chest_y - displays[1].h - display_y_spacing)
-
+                        
                         # Get tallest display and use that as a baseline
-                        height = max([displays[0].h, displays[1].h])
+                        max_height = max([displays[0].h, displays[1].h])
+
+                        display_one_x = chest_x - int(displays[0].w) - int(self.config.scd_display_x_spacing / 2)
+                        display_two_x = chest_x + int(self.config.scd_display_x_spacing / 2)
+                        
+                        touch_box_y1 = chest_y - max_height - self.config.scd_display_y_spacing
+                        touch_box_y2 = chest_y - self.config.scd_display_y_spacing
+                        touch_box_x1 = display_one_x
+                        touch_box_x2 = display_two_x + displays[1].w
+                        
+                        if display_one_x < 0:
+                            display_one_x = chest_x - int(displays[0].w / 2)
+                            display_two_x = chest_x + int(displays[0].w / 2) + self.config.scd_display_x_spacing
+
+                            touch_box_x1 = display_one_x
+                            touch_box_x2 = display_two_x + displays[1].w
+
+                        displays[0].reset(display_one_x, chest_y - displays[0].h - self.config.scd_display_y_spacing)
+                        displays[1].reset(display_two_x, chest_y - displays[1].h - self.config.scd_display_y_spacing)
+
+                        if DEBUG_MODE:
+                            x1y1 = util.PlainText(font='HemiHeadBold')
+                            x1y1.size = 20
+                            x1y1.text = "x1y1"
+                            x1y1.draw(touch_box_x1, touch_box_y1, anchorX=0.5, anchorY=0.5)
+
+                            x2y1 = util.PlainText(font='HemiHeadBold')
+                            x2y1.size = 20
+                            x2y1.text = "x2y1"
+                            x2y1.draw(touch_box_x2, touch_box_y1, anchorX=0.5, anchorY=0.5)
+
+                            x1y2 = util.PlainText(font='HemiHeadBold')
+                            x1y2.size = 20
+                            x1y2.text = "x1y2"
+                            x1y2.draw(touch_box_x1, touch_box_y2, anchorX=0.5, anchorY=0.5)
+ 
+                            x2y2 = util.PlainText(font='HemiHeadBold')
+                            x2y2.size = 20
+                            x2y2.text = "x2y2"
+                            x2y2.draw(touch_box_x2, touch_box_y2, anchorX=0.5, anchorY=0.5)
                         
                         if (self.config.scd_disable_on_walk_over):
-                            if (not ((player_y >= chest_y - height - display_y_spacing) and (player_y <= chest_y - display_y_spacing))
-                                or not ((player_x >= chest_x - int(displays[0].w) - int(display_x_spacing / 2)) and (player_x <= chest_x + int(displays[1].w) + int(display_x_spacing / 2)))):
+                            if (not ((player_y >= touch_box_y1) and (player_y <= touch_box_y2))
+                                or not ((player_x >= touch_box_x1) and (player_x <= touch_box_x2))):
                                     displays[0].draw()
                                     displays[1].draw()  
                         elif(self.config.scd_enable_on_walk_over):
-                            if (((player_y >= chest_y - height - display_y_spacing) and (player_y <= chest_y - display_y_spacing))
-                                and ((player_x >= chest_x - int(displays[0].w) - int(display_x_spacing / 2)) and (player_x <= chest_x + int(displays[1].w) + int(display_x_spacing / 2)))):
+                            if (((player_y >= touch_box_y1) and (player_y <= touch_box_y2))
+                                and ((player_x >= touch_box_x1) and (player_x <= touch_box_x2))):
                                     displays[0].draw()
                                     displays[1].draw() 
                         else:
@@ -850,22 +938,61 @@ class Plugin(PluginBase):
                         
                     elif len(displays) == 3:
                         # Base display [ [1**] [2**] [3**] ]
-                        displays[0].reset(chest_x - int(displays[0].w) - (chest_props.wmp // 1068) - displays[1].w + display_x_spacing, chest_y - displays[0].h - display_y_spacing)
-                        displays[1].reset(chest_x - int(displays[1].w / 2), chest_y - displays[1].h - display_y_spacing)
-                        displays[2].reset(chest_x + (chest_props.wmp // 1068) + displays[1].w - display_x_spacing, chest_y - displays[2].h - display_y_spacing)
 
                         # Get tallest display and use that as a baseline
-                        height = max([displays[0].h, displays[1].h, displays[2].h])
+                        max_height = max([displays[0].h, displays[1].h, displays[2].h])
+
+                        display_one_x = chest_x - int(displays[0].w / 2)
+                        display_two_x = chest_x - int(displays[0].w / 2) - displays[1].w - self.config.scd_display_x_spacing
+                        display_three_x = chest_x + int(displays[0].w / 2) + self.config.scd_display_x_spacing
+
+                        touch_box_y1 = chest_y - max_height - self.config.scd_display_y_spacing
+                        touch_box_y2 = chest_y - self.config.scd_display_y_spacing
+                        touch_box_x1 = display_two_x
+                        touch_box_x2 = display_three_x + displays[2].w
+
+                        if display_two_x < 0:
+                            display_one_x = chest_x - int(displays[0].w / 2)
+                            display_two_x = chest_x + int(displays[0].w / 2) + self.config.scd_display_x_spacing
+                            display_three_x = chest_x + int(displays[0].w / 2) + displays[1].w + (self.config.scd_display_x_spacing * 2)
+
+                            touch_box_x1 = display_one_x
+                            touch_box_x2 = display_three_x + displays[2].w
+
+                        displays[0].reset(display_one_x, chest_y - displays[0].h - self.config.scd_display_y_spacing)
+                        displays[1].reset(display_two_x, chest_y - displays[1].h - self.config.scd_display_y_spacing)
+                        displays[2].reset(display_three_x, chest_y - displays[2].h - self.config.scd_display_y_spacing)
+
+                        if DEBUG_MODE:
+                            x1y1 = util.PlainText(font='HemiHeadBold')
+                            x1y1.size = 20
+                            x1y1.text = "x1y1"
+                            x1y1.draw(touch_box_x1, touch_box_y1, anchorX=0.5, anchorY=0.5)
+
+                            x2y1 = util.PlainText(font='HemiHeadBold')
+                            x2y1.size = 20
+                            x2y1.text = "x2y1"
+                            x2y1.draw(touch_box_x2, touch_box_y1, anchorX=0.5, anchorY=0.5)
+
+                            x1y2 = util.PlainText(font='HemiHeadBold')
+                            x1y2.size = 20
+                            x1y2.text = "x1y2"
+                            x1y2.draw(touch_box_x1, touch_box_y2, anchorX=0.5, anchorY=0.5)
+ 
+                            x2y2 = util.PlainText(font='HemiHeadBold')
+                            x2y2.size = 20
+                            x2y2.text = "x2y2"
+                            x2y2.draw(touch_box_x2, touch_box_y2, anchorX=0.5, anchorY=0.5)
 
                         if (self.config.scd_disable_on_walk_over):
-                            if (not ((player_y >= chest_y - height - display_y_spacing) and (player_y <= chest_y - display_y_spacing))
-                                or not ((player_x >= chest_x - int(displays[0].w) - (chest_props.wmp // 1068) - displays[1].w + display_x_spacing) and (player_x <= chest_x + displays[2].w + (chest_props.wmp // 1068) + displays[1].w - display_x_spacing))):
+                            if (not ((player_y >= touch_box_y1) and (player_y <= touch_box_y2))
+                                or not ((player_x >= touch_box_x1) and (player_x <= touch_box_x2))):
                                     displays[0].draw()
                                     displays[1].draw()
                                     displays[2].draw() 
                         elif(self.config.scd_enable_on_walk_over):
-                            if (((player_y >= chest_y - height - display_y_spacing) and (player_y <= chest_y - display_y_spacing))
-                                and ((player_x >= chest_x - int(displays[0].w) - (chest_props.wmp // 1068) - displays[1].w + display_x_spacing) and (player_x <= chest_x + displays[2].w + (chest_props.wmp // 1068) + displays[1].w - display_x_spacing))):
+                            if (((player_y >= touch_box_y1) and (player_y <= touch_box_y2))
+                                and ((player_x >= touch_box_x1) and (player_x <= touch_box_x2))):
                                     displays[0].draw()
                                     displays[1].draw()
                                     displays[2].draw() 
