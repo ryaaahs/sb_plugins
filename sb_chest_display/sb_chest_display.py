@@ -228,12 +228,8 @@ class GraphicWindow(Graphic):
 
                     self.text_position += panel.h 
 
-                    self.x = min(self.x, self.refs.windowW - self.w)
-                    self.y = (
-                        self.y
-                        if self.y + self.h < self.refs.windowH
-                        else max(self.y - self.h, 0)
-                    )
+                    self.x = self.x
+                    self.y = self.y
             self.panel_is_first_item = False
         
     def reset(self, x, y):
@@ -241,8 +237,6 @@ class GraphicWindow(Graphic):
         self.x = x
         self.y = y
         self.base_window_y = y
-        # Calculate window and panel values
-        # self.defineWindow(self.panels)
         self.renderNestedPanels(self.panels)
 
     def draw(self):
@@ -317,12 +311,8 @@ class PanelGroup(Graphic):
 
                 self.text_position += panel.h 
 
-                self.x = min(x, self.refs.windowW - self.w)
-                self.y = (
-                    (y + self.base_window_y)
-                    if y + self.h < self.refs.windowH
-                    else max(y - self.h, 0)
-                )
+                self.x = self.x
+                self.y = self.y
 
     def reset(self, x, y, width, levels, base_window_y):
         # Grab parent colours if we have none
@@ -844,7 +834,6 @@ class Plugin(PluginBase):
                         displays[0].reset(display_one_x, display_one_y)
 
                         if DEBUG_MODE:
-                            # Place visual markers for touch box
                             x1y1 = util.PlainText(font='HemiHeadBold')
                             x1y1.size = 20
                             x1y1.text = "x1y1"
@@ -896,6 +885,13 @@ class Plugin(PluginBase):
 
                             touch_box_x1 = display_one_x
                             touch_box_x2 = display_two_x + displays[1].w
+                        elif display_two_x + displays[1].w > self.refs.windowW:
+                            display_one_x = chest_x - int(displays[0].w / 2)
+                            display_two_x = chest_x - int(displays[0].w / 2) - displays[1].w - self.config.scd_display_x_spacing
+                            
+                            touch_box_x1 = display_two_x
+                            touch_box_x2 = display_one_x + displays[0].w
+
 
                         displays[0].reset(display_one_x, chest_y - displays[0].h - self.config.scd_display_y_spacing)
                         displays[1].reset(display_two_x, chest_y - displays[1].h - self.config.scd_display_y_spacing)
@@ -958,6 +954,13 @@ class Plugin(PluginBase):
 
                             touch_box_x1 = display_one_x
                             touch_box_x2 = display_three_x + displays[2].w
+                        elif display_three_x + displays[2].w > self.refs.windowW:
+                            display_one_x = chest_x - int(displays[0].w / 2)
+                            display_two_x = chest_x - int(displays[0].w / 2) - displays[1].w - self.config.scd_display_x_spacing
+                            display_three_x = chest_x - int(displays[0].w / 2) - displays[1].w - displays[2].w - (self.config.scd_display_x_spacing * 2)
+
+                            touch_box_x1 = display_three_x
+                            touch_box_x2 = display_one_x + displays[0].w
 
                         displays[0].reset(display_one_x, chest_y - displays[0].h - self.config.scd_display_y_spacing)
                         displays[1].reset(display_two_x, chest_y - displays[1].h - self.config.scd_display_y_spacing)

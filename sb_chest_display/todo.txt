@@ -8,6 +8,6 @@
 [x] (Feature) Item hunting (Different display for this option)
 [x] (Feature) Disable display when the player runs ontop of the box (toggle)
 [] (Logic) Correct logic on Display Wildcard, so it enables Wildcards to be searched first and allows other items
-[] (Bug) Display issue where the background locks to the player camera window
-[] (Bug) Display renders out of the camera view (x/y)
+[x] (Bug) Display issue where the background locks to the player camera window
+[x] (Bug) Display renders out of the camera view (x/y)
 [] (Logic) Pull mod names from cpp header than hardcoding it
