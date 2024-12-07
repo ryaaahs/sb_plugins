@@ -2,8 +2,6 @@ import logging
 import os
 import json
 
-from sb_gui import *
-
 from enum import Enum
 from _remote import ffi, lib
 from manager import PluginBase
