@@ -15,9 +15,7 @@ BASEDIR = os.path.split(os.path.dirname(__file__))[0]
 
 ITEMS_JSON = BASEDIR + "\\items.json"
 BOOSTS_JSON = BASEDIR + "\\boosts.json"
-DEBUG_LOGPATH = BASEDIR + '\\scd_debug.txt'
 
-#TODO Get information from CPP Header than defining within the file
 ITEM_MODS = [
     "",
     "Modified",
@@ -44,7 +42,7 @@ UC_LIST = [
     "5 UC"
 ]
 
-# You can only have one filter type at a time (base filter if both are enabled is remove).
+# You can only have one filter type at a time (default filter if both are enabled is remove).
 # If EC/UC compression is on, use the following names within the filter lists to display/remove it
 # {"name": "EC"}
 # {"name": "UC"}
@@ -66,6 +64,7 @@ UC_LIST = [
 # Remove filter removes the items within the list you defined
 # If enabled and the list is empty, the logic will not remove any items from the gui display
 # Case sensitive with the information you pass into it 
+# Review modifiers names in boost.json
 remove_filter_list = [
     # Format
     # {"name": "Jansky Repeater"},
@@ -77,8 +76,8 @@ remove_filter_list = [
 
 # Display filter only displays the items within the list you defined
 # If enabled and the list is empty, the gui will display nothing
-
 # Case sensitive with the information you pass into it 
+# Review modifiers names in boost.json
 display_filter_list = [
     # Format
     # {"name": "Jansky Repeater"},
@@ -94,11 +93,12 @@ display_filter_list = [
 # Name: Full name of the item (case sensitive)
 # variant: varient name (DPS/ COMB/ Range...)
 # tracking: enable or disable the tracking (True/False)
-# modifiers: mods to track
+# modifiers: modifiers to track
+# Review modifiers names in boost.json
 
-# Create your own or use the ones within items_groups folder
+# Create your own or use the ones within items_groups folder perf_items.txt
 
-# NOTE: Please keep in mind that filters affect the display of perf tracking. Be mindful of that when creating your filters!
+# NOTE: Please keep in mind that filters affect the display of perf tracking. Be mindful of that when creating your filters
 perf_tracking = [
     # Format
     # {"name": "Jansky Repeater", "variant": "DPS", "tracking": True, "modifiers": ["Shot", "Armor Piercing", "Penetrating", "Explosive Ammo"]},
@@ -181,6 +181,7 @@ class GraphicWindow(Graphic):
         self.panel_spacing_h = 20
         self.text_position = 0
         self.base_window_y = 0
+        self.base_window_x = 0
         self.panels = []
         self.panel_is_first_item = True
 
@@ -213,12 +214,12 @@ class GraphicWindow(Graphic):
                 # levels = 1
                 if self.panel_is_first_item:
                     self.text_position += panel.reset(
-                        self.x, self.text_position + 1, self.w, 1, self.base_window_y
+                        self.x, self.text_position + 1, 1, self.base_window_y, self.base_window_x
                     )
                     self.panel_is_first_item = False
                 else:
                     self.text_position += panel.reset(
-                        self.x, self.text_position, self.w, 1, self.base_window_y
+                        self.x, self.text_position, 1, self.base_window_y, self.base_window_x
                     )
                 self.renderNestedPanels(panel.panels)
             else:
@@ -237,6 +238,7 @@ class GraphicWindow(Graphic):
         self.x = x
         self.y = y
         self.base_window_y = y
+        self.base_window_x = x
         self.renderNestedPanels(self.panels)
 
     def draw(self):
@@ -257,6 +259,7 @@ class PanelGroup(Graphic):
         self.panel_spacing_h = 20
         self.text_position = 0
         self.base_window_y = 0
+        self.base_window_x = 0
         self.levels = 0
         self.panels = []
 
@@ -314,13 +317,16 @@ class PanelGroup(Graphic):
                 self.x = self.x
                 self.y = self.y
 
-    def reset(self, x, y, width, levels, base_window_y):
+    def reset(self, x, y, levels, base_window_y, base_window_x):
         # Grab parent colours if we have none
         self.setDisplayColour()
 
         # Calculate window and panel values
         self.base_window_y = base_window_y
         self.levels += levels
+
+        self.y = base_window_y + y
+        self.x = base_window_x
 
         self.text_position = y
         
@@ -410,7 +416,6 @@ class GraphicPanelLabel(GraphicPanel):
 class Plugin(PluginBase):
     def onInit(self, inputs=None):
 
-        # Set config options
         self.config.options(
             "int",
             {
@@ -429,11 +434,12 @@ class Plugin(PluginBase):
                 "scd_text_experimental_label_colour": 0xFFD04EF0,
                 "scd_text_prototype_label_colour": 0xFFF0B03D,
                 "scd_text_perf_item_label_colour": 0xFFD22B2B, 
-                "scd_text_modified_colour": 0xFF79F071,
-                "scd_text_custom_colour": 0xFF638CF3,
-                "scd_text_experimental_colour": 0xFFDE83F4,
-                "scd_text_prototype_colour": 0xFFF6D291,
-                "scd_text_perf_item_prototype_colour": 0xFFDF6A6A, 
+                
+                "scd_text_modified_modifier_colour": 0xFF79F071,
+                "scd_text_custom_modifier_colour": 0xFF638CF3,
+                "scd_text_experimental_modifier_colour": 0xFFDE83F4,
+                "scd_text_prototype_modifier_colour": 0xFFF6D291,
+                "scd_text_perf_item_modifier_colour": 0xFFDF6A6A, 
             },
         )
     
@@ -450,11 +456,6 @@ class Plugin(PluginBase):
             },
         )
 
-        # Check if both filters are on, if so toggle off the display filter
-        if (self.config.scd_remove_filter and self.config.scd_display_filter):
-            self.config.scd_display_filter = False
-
-        # Set variables
         self.draw = False
         self.is_home = False
         self.new_subworld = False
@@ -604,30 +605,33 @@ class Plugin(PluginBase):
                                         continue
                                     elif "EC" in item_name or "UC" in item_name:
                                         continue
-
-                                if (len(item_boosts_names) > 0):
-                                    matched_item = False
-
-                                    for filter_item in display_filter_list:
-                                        item_boosts_names_copy = item_boosts_names
-                                        
-                                        if (item_name == filter_item["name"] and len(filter_item["modifiers"]) == len(item_boosts_names)):
-                                            for boost in filter_item["modifiers"]:
-                                                if boost in item_boosts_names:
-                                                    item_boosts_names_copy.remove(boost)
-                                                else: 
-                                                    break
-                                                
-                                            if (item_boosts_names_copy == []):
-                                                matched_item = True
-                                                break;
-                                    
-                                    if (matched_item):
+                                
+                                # Continue logic if item is in wc_filter list
+                                if item_name not in wildcard_filter_list:
+                                    # If the item is not within the list, check if the item matches boosts to display
+                                    if (len(item_boosts_names) > 0):
                                         matched_item = False
+
+                                        for filter_item in display_filter_list:
+                                            item_boosts_names_copy = item_boosts_names
+                                            
+                                            if (item_name == filter_item["name"] and len(filter_item["modifiers"]) == len(item_boosts_names)):
+                                                for boost in filter_item["modifiers"]:
+                                                    if boost in item_boosts_names:
+                                                        item_boosts_names_copy.remove(boost)
+                                                    else: 
+                                                        break
+                                                    
+                                                if (item_boosts_names_copy == []):
+                                                    matched_item = True
+                                                    break;
+                                        
+                                        if (matched_item):
+                                            matched_item = False
+                                        else:
+                                            continue
                                     else:
                                         continue
-                                elif item_name not in wildcard_filter_list:
-                                    continue
 
                             else: 
                                 if (self.config.scd_ec_uc_compress):
@@ -1004,12 +1008,6 @@ class Plugin(PluginBase):
                             displays[1].draw()
                             displays[2].draw()
 
-def writeToDebugFile(test_string):
-    with open(DEBUG_LOGPATH, "a") as file:
-        file.write(test_string)
-        if DEBUG_MODE:
-            logging.info("Finished writing to Debug file")
-
 def reFieldToList(rf, itemtype=None):
     """
     struct RepeatedField_int -> list
@@ -1046,22 +1044,22 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_it
 
     if perf_item:
         label_colour = self.config.scd_text_perf_item_label_colour
-        boost_colour = self.config.scd_text_perf_item_prototype_colour
+        boost_colour = self.config.scd_text_perf_item_modifier_colour
 
     if boost_length != -1:
         if not perf_item:
             if boost_length == 1:
                 label_colour = self.config.scd_text_modified_label_colour
-                boost_colour = self.config.scd_text_modified_colour
+                boost_colour = self.config.scd_text_modified_modifier_colour
             if boost_length == 2:
                 label_colour = self.config.scd_text_custom_label_colour
-                boost_colour = self.config.scd_text_custom_colour
+                boost_colour = self.config.scd_text_custom_modifier_colour
             if boost_length == 3:
                 label_colour = self.config.scd_text_experimental_label_colour
-                boost_colour = self.config.scd_text_experimental_colour
+                boost_colour = self.config.scd_text_experimental_modifier_colour
             if boost_length == 4:
                 label_colour = self.config.scd_text_prototype_label_colour
-                boost_colour = self.config.scd_text_prototype_colour
+                boost_colour = self.config.scd_text_prototype_modifier_colour
 
         item_color = label_colour
 
