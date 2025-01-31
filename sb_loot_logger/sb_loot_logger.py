@@ -18,7 +18,7 @@ FILTERED_ITEMS = list(filter(None, FILTERED_ITEMS))
 
 BASEDIR = os.path.split(os.path.dirname(__file__))[0]
 
-SB_LOOT_LOGGER_FOLDER = BASEDIR + '\\sblootlogger'
+SB_LOOT_LOGGER_FOLDER = BASEDIR + '\\sb_loot_logger'
 
 SUBWORLD_LOOT_LOGPATH = SB_LOOT_LOGGER_FOLDER + '\\subworld_loot.log'
 FLOOR_LOOT_LOGPATH = SB_LOOT_LOGGER_FOLDER + '\\floor_loot.log'

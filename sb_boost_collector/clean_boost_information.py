@@ -3,7 +3,7 @@ import json
 json_data = []
 
 #TODO Import the file using os.path, than hardcoding the address
-BOOST_DIR = "C:\\Users\\Desktop\\Games\\sbpe\\sblootlogger"
+BOOST_DIR = "C:\\Users\\Desktop\\Games\\sbpe\\sb_loot_logger"
 
 # Load JSON data
 # Open the file containing JSON objects
