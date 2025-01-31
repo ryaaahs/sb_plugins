@@ -18,7 +18,7 @@ FILTERED_ITEMS = list(filter(None, FILTERED_ITEMS))
 BASEDIR = os.path.split(os.path.dirname(__file__))[0]
 
 CLEAN_BOOSTS_PY = BASEDIR + '\\clean_boost_information.py'
-BOOST_MAP = BASEDIR + '\\boost_map.json'
+BOOSTS = BASEDIR + '\\boosts.json'
 SB_LOOT_LOGGER_FOLDER = BASEDIR + '\\sb_loot_logger'
 
 SUBWORLD_LOOT_LOGPATH = SB_LOOT_LOGGER_FOLDER + '\\subworld_loot.log'
@@ -155,7 +155,7 @@ def logLoot(self, obj, class_name):
                             if str(item.classptr) == str(chest_loot.itemProps.classptr):
                                 # We found a match
                                 boosts_list = [] 
-                                with open(BOOST_MAP, "r") as file:
+                                with open(BOOSTS, "r") as file:
                                     boost_map = json.load(file)
 
                                 for boost in reFieldToList(chest_loot.itemProps.statboosts, 'struct StatBoost *'):
