@@ -15,8 +15,8 @@ Collection of GUI classes that support drawing nested data to the screen using X
 `GraphicWindow`: Logic container to position the Graphic box and readjust size to childern elements. Can contain PanelGroups or direct items like Divider or Label  
 `PanelGroup`: Logic Container for GraphicPanel items, similar to GraphicWindow.  
 `GraphicPanel`: Base class for Panel items, pulls in refs data from GraphicWindow.  
-`GraphicPanelDivider`: Displays an <hr> line within the display.
-`GraphicPanelLabel`:  Displays text within the display.
+`GraphicPanelDivider`: Displays an `<hr>` line within the display.  
+`GraphicPanelLabel`:  Displays text within the display.  
 
 # Usage
 Bring the SB GUI classes into the plugin to use.
