@@ -880,18 +880,13 @@ class Plugin(PluginBase):
                         
                         display_one_x = chest_x - int(displays[0].w) - int(self.config.scd_display_x_spacing / 2)
                         display_two_x = chest_x + int(self.config.scd_display_x_spacing / 2)
-
-                        # display_one_x = chest_x - int(displays[0].w / 2)
-                        # display_two_x = chest_x + int(displays[0].w / 2) + self.config.scd_display_x_spacing
-
-                        logging.info(display_one_x)
                         
                         touch_box_y1 = chest_y - max_height - self.config.scd_display_y_spacing
                         touch_box_y2 = chest_y - self.config.scd_display_y_spacing
                         touch_box_x1 = display_one_x
                         touch_box_x2 = display_two_x + displays[1].w
                         
-                        if display_one_x < 0:                   
+                        if display_one_x < 0:
                             display_one_x = chest_x - int(displays[0].w / 2)
                             display_two_x = chest_x + int(displays[0].w / 2) + self.config.scd_display_x_spacing
 
@@ -973,7 +968,6 @@ class Plugin(PluginBase):
 
                             # Check again if display needs to be corrected with scale 
                             if display_one_x < 0:
-                                # Correct display to use scale correction   
                                 display_one_x = chest_x - int(displays[0].w / 2)
 
                                 x_difference = display_one_x * -1
