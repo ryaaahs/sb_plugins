@@ -99,12 +99,12 @@ display_filter_list = [
 # NOTE: Please keep in mind that filters affect the display of perf tracking. Be mindful of that when creating your filters
 perf_tracking = [
     # Format
-    # {"name": "Jansky Repeater", "variant": "DPS", "tracking": True, "modifiers": ["Shot", "Armor Piercing", "Penetrating", "Explosive Ammo"]},
+    # {"name": "Jansky Repeater", "variant": "DPS", "tracking": True, "modifiers": ["Shots", "Armor Piercing", "Penetrating", "Explosive Ammo"]},
     # {"name": "Jansky Repeater", "variant": "COMB", "tracking": True, "modifiers": ["Shots", "Range", "Penetrating", "Explosive Ammo"]},
     # {"name": "Jansky Repeater", "variant": "Range", "tracking": True, "modifiers": ["Shots", "Armor Piercing", "Penetrating", "Range"]},
 ]
 
-class Graphic:  # make subclass of PluginBase?
+class Graphic:
     def __init__(self, refs):
         self.refs = refs
         self.x = -1
@@ -545,8 +545,6 @@ class Plugin(PluginBase):
                                         perf_item_match = True
                                         item_name = perf_item["variant"] + " " + loot_item.get("name")
                                         
-
-
                             if (self.config.scd_remove_filter):
                                 wildcard_filter_list = []
                                 for filter_item in remove_filter_list:
@@ -828,6 +826,13 @@ class Plugin(PluginBase):
                         display_one_x = chest_x - int(displays[0].w / 2)
                         display_one_y = chest_y - displays[0].h - self.config.scd_display_y_spacing
 
+                        # Fix position on different zoom levels
+                        if (display_one_x < 0): 
+                            # Flip the value to positive
+                            x_difference = display_one_x * -1
+                            # Move the value over by difference + scale
+                            display_one_x += int(x_difference * self.refs.scaleX)
+
                         touch_box_y1 = display_one_y
                         touch_box_y2 = chest_y - self.config.scd_display_y_spacing
                         touch_box_x1 = display_one_x
@@ -872,18 +877,30 @@ class Plugin(PluginBase):
                         
                         # Get tallest display and use that as a baseline
                         max_height = max([displays[0].h, displays[1].h])
-
+                        
                         display_one_x = chest_x - int(displays[0].w) - int(self.config.scd_display_x_spacing / 2)
                         display_two_x = chest_x + int(self.config.scd_display_x_spacing / 2)
+
+                        # display_one_x = chest_x - int(displays[0].w / 2)
+                        # display_two_x = chest_x + int(displays[0].w / 2) + self.config.scd_display_x_spacing
+
+                        logging.info(display_one_x)
                         
                         touch_box_y1 = chest_y - max_height - self.config.scd_display_y_spacing
                         touch_box_y2 = chest_y - self.config.scd_display_y_spacing
                         touch_box_x1 = display_one_x
                         touch_box_x2 = display_two_x + displays[1].w
                         
-                        if display_one_x < 0:
+                        if display_one_x < 0:                   
                             display_one_x = chest_x - int(displays[0].w / 2)
                             display_two_x = chest_x + int(displays[0].w / 2) + self.config.scd_display_x_spacing
+
+                            # Check again if display needs to be corrected with scale 
+                            if display_one_x < 0:
+                                x_difference = display_one_x * -1
+                                
+                                display_one_x += int(x_difference * self.refs.scaleX)
+                                display_two_x += int(x_difference * self.refs.scaleX)
 
                             touch_box_x1 = display_one_x
                             touch_box_x2 = display_two_x + displays[1].w
@@ -953,6 +970,17 @@ class Plugin(PluginBase):
                             display_one_x = chest_x - int(displays[0].w / 2)
                             display_two_x = chest_x + int(displays[0].w / 2) + self.config.scd_display_x_spacing
                             display_three_x = chest_x + int(displays[0].w / 2) + displays[1].w + (self.config.scd_display_x_spacing * 2)
+
+                            # Check again if display needs to be corrected with scale 
+                            if display_one_x < 0:
+                                # Correct display to use scale correction   
+                                display_one_x = chest_x - int(displays[0].w / 2)
+
+                                x_difference = display_one_x * -1
+                                
+                                display_one_x += int(x_difference * self.refs.scaleX)
+                                display_two_x += int(x_difference * self.refs.scaleX)
+                                display_three_x += int(x_difference * self.refs.scaleX)
 
                             touch_box_x1 = display_one_x
                             touch_box_x2 = display_three_x + displays[2].w
