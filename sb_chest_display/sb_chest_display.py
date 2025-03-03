@@ -308,7 +308,7 @@ class PanelGroup(Graphic):
             if isinstance(panel, PanelGroup):
                 self.defineWindow(panel.panels)
             else:
-                self.w = max(self.w, panel.w + 2 * self.panel_spacing_w)
+                self.w = self.window.w
                 self.h += panel.h
 
     def setDisplayColour(self):
@@ -502,7 +502,7 @@ class Plugin(PluginBase):
                 "scd_display_filter": False,
                 "scd_disable_on_walk_over": False,
                 "scd_enable_on_walk_over": False,
-                "scd_equal_chest_display": False
+                "scd_equal_chest_display": False,
             },
         )
 
@@ -893,14 +893,7 @@ class Plugin(PluginBase):
                         # Base display [ [1**] [] [] ]
                         display_one_x = chest_x - int(displays[0].w / 2)
                         display_one_y = chest_y - displays[0].h - self.config.scd_display_y_spacing
-
-                        # Fix position on different zoom levels
-                        if (display_one_x < 0): 
-                            # Flip the value to positive
-                            x_difference = display_one_x * -1
-                            # Move the value over by difference + scale
-                            display_one_x += int(x_difference * self.refs.scaleX)
-
+                        
                         touch_box_y1 = display_one_y
                         touch_box_y2 = chest_y - self.config.scd_display_y_spacing
                         touch_box_x1 = display_one_x
@@ -957,13 +950,6 @@ class Plugin(PluginBase):
                         if display_one_x < 0:
                             display_one_x = chest_x - int(displays[0].w / 2)
                             display_two_x = chest_x + int(displays[0].w / 2) + self.config.scd_display_x_spacing
-
-                            # Check again if display needs to be corrected with scale 
-                            if display_one_x < 0:
-                                x_difference = display_one_x * -1
-                                
-                                display_one_x += int(x_difference * self.refs.scaleX)
-                                display_two_x += int(x_difference * self.refs.scaleX)
 
                             touch_box_x1 = display_one_x
                             touch_box_x2 = display_two_x + displays[1].w
