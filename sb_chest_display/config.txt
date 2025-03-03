@@ -3,38 +3,73 @@
 sb_chest_display scd_display_box toggle no yes = Right Alt
 
 [plugin_sb_chest_display]
-scd_display_box = yes
-
-scd_max_items_per_box = 20
-
+scd_max_items_per_box = 15
 scd_text_display_size = 15
 scd_display_x_spacing = 25
 scd_display_y_spacing = 15
 
+scd_display_box = yes
+# Toggling background display colours
+scd_display_container_background = yes
+scd_display_panel_group_background = no
+scd_equal_chest_display = yes
 scd_ec_uc_compress = no
-
 # You can only have one filter on, default is remove if both are on
 scd_remove_filter = no
 scd_display_filter = no
-
 # You can only have one walkover on, default is disable if both are on
 scd_disable_on_walk_over = no
 scd_enable_on_walk_over = no
 
-# Overrides scd_max_items_per_box and balances each display to be even
-scd_equal_chest_display = yes
+# Opacity ranges from (Nothing) 0 <-> 255 (Full)
+# Display Background Colour
+scd_display_background_colour = 2b2b2b
+scd_display_background_colour_opacity = 255
 
-# Item Label Colours
+# Display Border Colour
+scd_display_border_colour = a0a0a0
+scd_display_border_colour_opacity = 255
+
+# Item Background Colour/Opacity
+scd_common_fill_background_colour = ffffff
+scd_modified_fill_background_colour = 79f071
+scd_custom_fill_background_colour = 3d70f0
+scd_experimental_fill_background_colour = d04ef0       
+scd_prototype_fill_background_colour = f0b03d        
+scd_perf_item_fill_background_colour = d22b2b
+# Opacity ranges from (Nothing) 0 <-> 255 (Full)
+scd_common_fill_background_colour_opacity = 25
+scd_modified_fill_background_colour_opacity = 25
+scd_custom_fill_background_colour_opacity = 25
+scd_experimental_fill_background_colour_opacity = 25
+scd_prototype_fill_background_colour_opacity = 25        
+scd_perf_item_fill_background_colour_opacity = 25
+
+# Item Label Colours/Opacity
+scd_text_common_label_colour = ffffff
 scd_text_modified_label_colour = 79f071
 scd_text_custom_label_colour = 3d70f0
 scd_text_experimental_label_colour = d04ef0
 scd_text_prototype_label_colour = f0b03d
 scd_text_perf_item_label_colour = d22b2b
+# Opacity ranges from (Nothing) 0 <-> 1.0 (Full)
+scd_text_common_label_colour_opacity = 1.0
+scd_text_modified_label_colour_opacity = 1.0
+scd_text_custom_label_colour_opacity = 1.0
+scd_text_experimental_label_colour_opacity = 1.0
+scd_text_prototype_label_colour_opacity = 1.0
+scd_text_perf_item_label_colour_opacity = 1.0
 
-# Modifier Colours
+# Modifier Label Colours/Opacity
 scd_text_modified_modifier_colour = 79f071
 scd_text_custom_modifier_colour = 638cf3
 scd_text_experimental_modifier_colour = de83f4
 scd_text_prototype_modifier_colour = f3bf63
 scd_text_perf_item_modifier_colour = df6a6a
+# Opacity ranges from (Nothing) 0 <-> 1 (Full)
+scd_text_modified_modifier_colour_opacity = 1.0
+scd_text_custom_modifier_colour_opacity = 1.0
+scd_text_experimental_modifier_colour_opacity = 1.0
+scd_text_prototype_modifier_colour_opacity = 1.0
+scd_text_perf_item_modifier_colour_opacity = 1.0
 
