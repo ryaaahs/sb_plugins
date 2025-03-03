@@ -111,13 +111,16 @@ class Graphic:
         self.y = -1
         self.w = 0
         self.h = 0
+        self.fill_rect_colour = "2B2B2B"
+        self.fill_rect_opacity = 255
+        self.draw_rect_colour = "A0A0A0"
+        self.draw_rect_opacity = 255
         self.draw_top_border = False
         self.draw_bottom_border = False
         self.draw_right_border = False
         self.draw_left_border = False
-        self.fill_rect = 0xFF2B2B2B
+        self.display_fill_rect = True
         self.fill_rect_blend = lib.BLENDMODE_BLEND
-        self.draw_rect = 0xFFA0A0A0
         self.draw_rect_blend = lib.BLENDMODE_BLEND
 
     # Toggle the border display
@@ -133,6 +136,21 @@ class Graphic:
     def drawLeftBorder(self):
         self.draw_left_border ^= True
 
+    def setFillRectOpacity(self, opacity):
+        self.fill_rect_opacity = opacity
+
+    def setDrawRectOpacity(self, opacity):
+        self.draw_rect_opacity = opacity
+    
+    def setFillRectColour(self, colour):
+        self.fill_rect_colour = colour
+
+    def setDrawRectColour(self, colour):
+        self.draw_rect_colour = colour
+    
+    def displayFillRect(self, show):
+        self.display_fill_rect = show
+
     def drawBorder(self):
         self.drawTopBorder()
         self.drawBottomBorder()
@@ -145,15 +163,16 @@ class Graphic:
 
         self.refs.canvasW_[0] = self.refs.windowW
         self.refs.canvasH_[0] = self.refs.windowH
-
-        if type(self.fill_rect) == "str":
-            self.fill_rect = int(str(self.fill_rect), 16)
-        if type(self.draw_rect) == "str":
-            self.draw_rect = int(str(self.draw_rect), 16)
-
-        self.refs.XDL_FillRect(
-            self.x, self.y, self.w, self.h, self.fill_rect, self.fill_rect_blend
-        )
+        
+        if (self.display_fill_rect):
+            self.refs.XDL_FillRect(
+                self.x, self.y, self.w, self.h, 
+                str_colour_to_hex(
+                    self.fill_rect_colour, 
+                    self.fill_rect_opacity
+                ), 
+                self.fill_rect_blend
+            )
 
         x = self.x if self.draw_top_border == True else 0
         y = self.y if self.draw_bottom_border == True else 0
@@ -166,7 +185,13 @@ class Graphic:
             test.text = "x"
             test.draw(x, y, anchorX=0.5, anchorY=0.5)
 
-        self.refs.XDL_DrawRect(x, y, w, h, self.draw_rect, self.fill_rect_blend)
+        self.refs.XDL_DrawRect(x, y, w, h, 
+            str_colour_to_hex(
+                self.draw_rect_colour, 
+                self.draw_rect_opacity
+            ), 
+            self.fill_rect_blend
+        )
 
         self.refs.canvasW_[0] = cw
         self.refs.canvasH_[0] = ch
@@ -186,9 +211,9 @@ class GraphicWindow(Graphic):
     def addPanelGroup(self, panel_group):
         self.panels.append(panel_group)
 
-    def addLabel(self, text=None, position=1, colour=0xFFFFFF):
+    def addLabel(self, text=None, position=1, colour="ffffff", opacity=1):
         self.panels.append(
-            GraphicPanelLabel(self.refs, self, self, text, position, colour)
+            GraphicPanelLabel(self.refs, self, self, text, position, int(colour, 16), opacity)
         )
 
     def addPanelDivider(self, text=None):
@@ -250,7 +275,6 @@ class PanelGroup(Graphic):
         super().__init__(refs)
         self.tag = tag
         self.window = window
-        self.parent = None
         self.set_fill_rect = ""
         self.set_draw_rect = ""
         self.panel_spacing_w = 3
@@ -265,19 +289,19 @@ class PanelGroup(Graphic):
         self.panels.append(panel_group)
         panel_group.parent = self
 
-    def addLabel(self, text=None, position=1, colour=0xFFFFFF):
+    def addLabel(self, text=None, position=1, colour="FFFFFF", opacity=1):
         self.panels.append(
-            GraphicPanelLabel(self.refs, self.window, self, text, position, colour)
+            GraphicPanelLabel(self.refs, self.window, self, text, position, int(colour, 16), opacity)
         )
 
     def addPanelDivider(self, text=None):
         self.panels.append(GraphicPanelDivider(self.refs, self.window, self))
 
-    def changeFillRectColour(self, hexcode):
-        self.set_fill_rect = hexcode
+    def changeFillRectColour(self, hexcode_str):
+        self.set_fill_rect = hexcode_str
 
-    def changeDrawRectColour(self, hexcode):
-        self.set_draw_rect = hexcode
+    def changeDrawRectColour(self, hexcode_str):
+        self.set_draw_rect = hexcode_str
 
     def defineWindow(self, panels):
         for panel in panels:
@@ -288,17 +312,19 @@ class PanelGroup(Graphic):
                 self.h += panel.h
 
     def setDisplayColour(self):
-        if self.set_fill_rect == "" and self.parent != None:
-            if self.parent.set_fill_rect != "":
-                self.fill_rect = self.parent.set_fill_rect
+        if self.set_fill_rect == "" and self.window != None:
+            if self.window.fill_rect_colour != "":
+                self.fill_rect_colour = self.window.fill_rect_colour
+                self.fill_rect_opacity = self.window.fill_rect_opacity
         elif self.set_fill_rect != "":
-            self.fill_rect = self.set_fill_rect
+            self.fill_rect_colour = self.set_fill_rect
 
-        if self.set_draw_rect == "" and self.parent != None:
-            if self.parent.set_draw_rect != "":
-                self.draw_rect = self.parent.set_draw_rect
+        if self.set_draw_rect == "" and self.window != None:
+            if self.window.draw_rect_colour != "":
+                self.draw_rect_colour = self.window.draw_rect_colour
+                self.draw_rect_opacity = self.window.draw_rect_opacity
         elif self.set_draw_rect != "":
-            self.draw_rect = self.set_draw_rect
+            self.draw_rect_colour = self.set_draw_rect
 
     def renderNestedPanels(self, panels, x, y):
         for panel in panels:
@@ -345,7 +371,6 @@ class PanelGroup(Graphic):
 class GraphicPanel(Graphic):  # TODO: get refs from window
     def __init__(self, refs, window):
         super().__init__(refs)
-
         self.window = window
 
     def draw(self):
@@ -377,7 +402,7 @@ class GraphicPanelDivider(GraphicPanel):
 
 
 class GraphicPanelLabel(GraphicPanel):
-    def __init__(self, refs, window, parent, text=None, position=1, colour=0xFFFFFF):
+    def __init__(self, refs, window, parent, text=None, position=1, colour=0xFFFFFF, opacity=1):
         super().__init__(refs, window)
         self.h = 22
         self.position = position
@@ -390,6 +415,7 @@ class GraphicPanelLabel(GraphicPanel):
             size=13, outlineSize=0
         )  # Size should be 12 but real font size is set to 10
         self.text_obj.color = self.colour
+        self.text_obj.alpha = opacity
         self.text_ready = False
         if text != None:
             self.setText(text)
@@ -421,23 +447,48 @@ class Plugin(PluginBase):
                 "scd_max_items_per_box": 20,
                 "scd_display_x_spacing": 25, 
                 "scd_display_y_spacing": 15,
+
+                "scd_display_background_colour_opacity": 255,
+                "scd_display_border_colour_opacity": 255,
             },
         )
 
         self.config.options(
-            "color",
+            "float",
             {
-                "scd_text_modified_label_colour": 0xFF1DB113,
-                "scd_text_custom_label_colour": 0xFF3D70F0,
-                "scd_text_experimental_label_colour": 0xFFD04EF0,
-                "scd_text_prototype_label_colour": 0xFFF0B03D,
-                "scd_text_perf_item_label_colour": 0xFFD22B2B, 
+                "scd_text_common_label_colour_opacity": 1.0,
+                "scd_text_modified_label_colour_opacity": 1.0,
+                "scd_text_custom_label_colour_opacity": 1.0,
+                "scd_text_experimental_label_colour_opacity": 1.0,
+                "scd_text_prototype_label_colour_opacity": 1.0,
+                "scd_text_perf_item_label_colour_opacity": 1.0,
+
+                "scd_text_modified_modifier_colour_opacity": 1.0,
+                "scd_text_custom_modifier_colour_opacity": 1.0,
+                "scd_text_experimental_modifier_colour_opacity": 1.0,
+                "scd_text_prototype_modifier_colour_opacity": 1.0,
+                "scd_text_perf_item_modifier_colour_opacity": 1.0,
+            },
+        )
+
+        self.config.options(
+            "str",
+            {
+                "scd_text_common_label_colour": "FFFFFF",
+                "scd_text_modified_label_colour": "1DB113",
+                "scd_text_custom_label_colour": "3D70F0",
+                "scd_text_experimental_label_colour": "D04EF0",
+                "scd_text_prototype_label_colour": "F0B03D",
+                "scd_text_perf_item_label_colour": "D22B2B", 
                 
-                "scd_text_modified_modifier_colour": 0xFF79F071,
-                "scd_text_custom_modifier_colour": 0xFF638CF3,
-                "scd_text_experimental_modifier_colour": 0xFFDE83F4,
-                "scd_text_prototype_modifier_colour": 0xFFF6D291,
-                "scd_text_perf_item_modifier_colour": 0xFFDF6A6A, 
+                "scd_text_modified_modifier_colour": "79F071",
+                "scd_text_custom_modifier_colour": "638CF3",
+                "scd_text_experimental_modifier_colour": "DE83F4",
+                "scd_text_prototype_modifier_colour": "F6D291",
+                "scd_text_perf_item_modifier_colour": "DF6A6A", 
+
+                "scd_display_background_colour": "2B2B2B",
+                "scd_display_border_colour": "A0A0A0", 
             },
         )
     
@@ -445,6 +496,7 @@ class Plugin(PluginBase):
             "bool",
             {
                 "scd_display_box": True,
+                "scd_display_panel_group_background": False,
                 "scd_ec_uc_compress": False,
                 "scd_remove_filter": False,
                 "scd_display_filter": False,
@@ -751,8 +803,13 @@ class Plugin(PluginBase):
                     displays = []
                     # Base display [ [1**] [] [] ]
                     displays.append(GraphicWindow(self.refs))
-                    
                     display_index = 0
+                    #  Update draw configuration before passing it to children
+                    displays[display_index].setFillRectColour(self.config.scd_display_background_colour)
+                    displays[display_index].setDrawRectColour(self.config.scd_display_border_colour)
+                    displays[display_index].setFillRectOpacity(self.config.scd_display_background_colour_opacity)
+                    displays[display_index].setDrawRectOpacity(self.config.scd_display_border_colour_opacity)
+                    
                     panel_group_number = 0
                     text_element_index = 0
                     total_displays = 0
@@ -774,12 +831,22 @@ class Plugin(PluginBase):
                         if (text_element_index >= max_item_display and display_index != total_displays - 1):
                             displays.append(GraphicWindow(self.refs))
                             display_index += 1
+                            displays[display_index].setFillRectColour(self.config.scd_display_background_colour)
+                            displays[display_index].setDrawRectColour(self.config.scd_display_border_colour)
+                            displays[display_index].setFillRectOpacity(self.config.scd_display_background_colour_opacity)
+                            displays[display_index].setDrawRectOpacity(self.config.scd_display_border_colour_opacity)
+
                             text_element_index = 0
 
                         if len(element["boosts"]) == 0:
                             text_element_index += 1
 
-                            displays[display_index].addLabel(element["item"]["text"])
+                            displays[display_index].addLabel(
+                                element["item"]["text"], 
+                                1, 
+                                self.config.scd_text_common_label_colour, 
+                                self.config.scd_text_common_label_colour_opacity
+                            )
 
                             # First check to see if we are not on the max display
                             # Second, check to see if we are at the end of the display dict list
@@ -793,19 +860,20 @@ class Plugin(PluginBase):
                             panel_group = PanelGroup(
                                 self.refs, displays[display_index], "pg" + str(panel_group_number)
                             )
+                            panel_group.displayFillRect(self.config.scd_display_panel_group_background)
                             
                             text_element_index += 1
                             panel_group.addLabel(
                                 element["item"]["text"],
                                 0,
                                 element["item"]["label_colour"],
+                                element["item"]["label_opacity"],
                             )
                             
-
                             for boost_elements in element["boosts"]:
                                 text_element_index += 1 
                                 panel_group.addLabel(
-                                    boost_elements["text"], 1, boost_elements["colour"]
+                                    boost_elements["text"], 1, boost_elements["colour"], boost_elements["opacity"]
                             )   
 
                             # First check to see if we are not on the max display
@@ -968,6 +1036,7 @@ class Plugin(PluginBase):
 
                             # Check again if display needs to be corrected with scale 
                             if display_one_x < 0:
+                                # Correct display to use scale correction   
                                 display_one_x = chest_x - int(displays[0].w / 2)
 
                                 x_difference = display_one_x * -1
@@ -1048,15 +1117,18 @@ def addPlainToLoggingDisplay(self, string):
         "item": {
             "text": string,
             "size": self.config.scd_text_display_size,
-            "label_colour": 0xFFFFFF,
+            "label_colour": "ffffff",
+            "label_opacity": 255,
         },
         "boosts": [],
     }
 
 def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_item):
     boosts_list = []
-    label_colour = 0xFFFFFF
-    boost_colour = 0xFFFFFF
+    label_colour = "ffffff"
+    label_opacity = 255
+    boost_colour = "ffffff"
+    boost_opacity = 255
 
     # Item
     item_size = self.config.scd_text_display_size
@@ -1064,24 +1136,32 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_it
 
     if perf_item:
         label_colour = self.config.scd_text_perf_item_label_colour
+        label_opacity = self.config.scd_text_perf_item_label_colour_opacity
         boost_colour = self.config.scd_text_perf_item_modifier_colour
+        boost_opacity = self.config.scd_text_perf_item_modifier_colour_opacity
 
     if boost_length != -1:
         if not perf_item:
             if boost_length == 1:
                 label_colour = self.config.scd_text_modified_label_colour
+                label_opacity = self.config.scd_text_modified_label_colour_opacity
                 boost_colour = self.config.scd_text_modified_modifier_colour
+                boost_opacity = self.config.scd_text_modified_modifier_colour_opacity
             if boost_length == 2:
                 label_colour = self.config.scd_text_custom_label_colour
+                label_opacity = self.config.scd_text_custom_label_colour_opacity
                 boost_colour = self.config.scd_text_custom_modifier_colour
+                boost_opacity = self.config.scd_text_custom_modifier_colour_opacity
             if boost_length == 3:
                 label_colour = self.config.scd_text_experimental_label_colour
+                label_opacity = self.config.scd_text_experimental_label_colour_opacity
                 boost_colour = self.config.scd_text_experimental_modifier_colour
+                boost_opacity = self.config.scd_text_experimental_modifier_colour_opacity
             if boost_length == 4:
                 label_colour = self.config.scd_text_prototype_label_colour
+                label_opacity = self.config.scd_text_prototype_label_colour_opacity
                 boost_colour = self.config.scd_text_prototype_modifier_colour
-
-        item_color = label_colour
+                boost_opacity = self.config.scd_text_prototype_modifier_colour_opacity
 
         # Boosts
         for boost in reFieldToList(boosts, "struct StatBoost *"):
@@ -1144,6 +1224,7 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_it
             boost_display["size"] = self.config.scd_text_display_size
             boost_display["text"] = text
             boost_display["colour"] = boost_colour
+            boost_display["opacity"] = boost_opacity
 
             boosts_list.append(boost_display)
 
@@ -1151,10 +1232,19 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_it
         "item": {
             "text": item_text,
             "size": item_size,
-            "label_colour": item_color,
+            "label_colour": label_colour,
+            "label_opacity": label_opacity,
         },
         "boosts": boosts_list,
     }
+
+
+def str_colour_to_hex(colour, opacity):
+    # Check opacity bounds
+    if (opacity < 0 or opacity > 255): 
+        opacity = 255
+
+    return int(hex(opacity) + colour, 16)
 
 
 def filter_boost(boost_list, boost_id, filters):
