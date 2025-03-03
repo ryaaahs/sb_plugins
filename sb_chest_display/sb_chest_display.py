@@ -277,6 +277,8 @@ class PanelGroup(Graphic):
         self.window = window
         self.set_fill_rect = ""
         self.set_draw_rect = ""
+        self.set_fill_rect_opacity = 0
+        self.set_draw_rect_opacity = 0
         self.panel_spacing_w = 3
         self.panel_spacing_h = 20
         self.text_position = 0
@@ -297,11 +299,13 @@ class PanelGroup(Graphic):
     def addPanelDivider(self, text=None):
         self.panels.append(GraphicPanelDivider(self.refs, self.window, self))
 
-    def changeFillRectColour(self, hexcode_str):
+    def changeFillRectColour(self, hexcode_str, opacity):
         self.set_fill_rect = hexcode_str
+        self.set_fill_rect_opacity = opacity
 
-    def changeDrawRectColour(self, hexcode_str):
+    def changeDrawRectColour(self, hexcode_str, opacity):
         self.set_draw_rect = hexcode_str
+        self.set_draw_rect_opacity = opacity
 
     def defineWindow(self, panels):
         for panel in panels:
@@ -314,17 +318,19 @@ class PanelGroup(Graphic):
     def setDisplayColour(self):
         if self.set_fill_rect == "" and self.window != None:
             if self.window.fill_rect_colour != "":
-                self.fill_rect_colour = self.window.fill_rect_colour
-                self.fill_rect_opacity = self.window.fill_rect_opacity
+                self.setFillRectColour(self.window.fill_rect_colour)
+                self.setFillRectOpacity(self.window.fill_rect_opacity)
         elif self.set_fill_rect != "":
-            self.fill_rect_colour = self.set_fill_rect
+            self.setFillRectColour(self.set_fill_rect)
+            self.setFillRectOpacity(self.set_fill_rect_opacity)
 
         if self.set_draw_rect == "" and self.window != None:
             if self.window.draw_rect_colour != "":
-                self.draw_rect_colour = self.window.draw_rect_colour
-                self.draw_rect_opacity = self.window.draw_rect_opacity
+                self.setDrawRectColour(self.window.draw_rect_colour)
+                self.setDrawRectOpacity(self.window.draw_rect_opacity)
         elif self.set_draw_rect != "":
-            self.draw_rect_colour = self.set_draw_rect
+            self.setDrawRectColour(self.set_draw_rect)
+            self.setDrawRectOpacity(self.set_draw_rect_opacity)
 
     def renderNestedPanels(self, panels, x, y):
         for panel in panels:
@@ -450,6 +456,13 @@ class Plugin(PluginBase):
 
                 "scd_display_background_colour_opacity": 255,
                 "scd_display_border_colour_opacity": 255,
+
+                "scd_common_fill_background_colour_opacity": 255,
+                "scd_modified_fill_background_colour_opacity": 255,
+                "scd_custom_fill_background_colour_opacity": 255,
+                "scd_experimental_fill_background_colour_opacity": 255,
+                "scd_prototype_fill_background_colour_opacity": 255,
+                "scd_perf_item_fill_background_colour_opacity": 255,
             },
         )
 
@@ -474,6 +487,13 @@ class Plugin(PluginBase):
         self.config.options(
             "str",
             {
+                "scd_common_fill_background_colour":  "ffffff",
+                "scd_modified_fill_background_colour":  "79f071",
+                "scd_custom_fill_background_colour":  "3d70f0",
+                "scd_experimental_fill_background_colour":  "d04ef0",
+                "scd_prototype_fill_background_colour":  "f0b03d",
+                "scd_perf_item_fill_background_colour":  "d22b2b",
+
                 "scd_text_common_label_colour": "FFFFFF",
                 "scd_text_modified_label_colour": "1DB113",
                 "scd_text_custom_label_colour": "3D70F0",
@@ -496,6 +516,7 @@ class Plugin(PluginBase):
             "bool",
             {
                 "scd_display_box": True,
+                "scd_display_container_background": True,
                 "scd_display_panel_group_background": False,
                 "scd_ec_uc_compress": False,
                 "scd_remove_filter": False,
@@ -861,6 +882,7 @@ class Plugin(PluginBase):
                                 self.refs, displays[display_index], "pg" + str(panel_group_number)
                             )
                             panel_group.displayFillRect(self.config.scd_display_panel_group_background)
+                            panel_group.changeFillRectColour(element["item"]["fill_background"], element["item"]["fill_background_opacity"])
                             
                             text_element_index += 1
                             panel_group.addLabel(
@@ -887,6 +909,7 @@ class Plugin(PluginBase):
 
                     for element in displays:
                         element.drawBorder()
+                        element.displayFillRect(self.config.scd_display_container_background)
                         element.defineWindow(element.panels, False)
                     
                     if len(displays) == 1:
@@ -1115,6 +1138,8 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_it
     label_opacity = 255
     boost_colour = "ffffff"
     boost_opacity = 255
+    fill_background = "ffffff"
+    fill_background_opacity = 255
 
     # Item
     item_size = self.config.scd_text_display_size
@@ -1125,6 +1150,8 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_it
         label_opacity = self.config.scd_text_perf_item_label_colour_opacity
         boost_colour = self.config.scd_text_perf_item_modifier_colour
         boost_opacity = self.config.scd_text_perf_item_modifier_colour_opacity
+        fill_background = self.config.scd_perf_item_fill_background_colour
+        fill_background_opacity = self.config.scd_perf_item_fill_background_colour_opacity
 
     if boost_length != -1:
         if not perf_item:
@@ -1133,21 +1160,33 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_it
                 label_opacity = self.config.scd_text_modified_label_colour_opacity
                 boost_colour = self.config.scd_text_modified_modifier_colour
                 boost_opacity = self.config.scd_text_modified_modifier_colour_opacity
+                fill_background = self.config.scd_modified_fill_background_colour
+                fill_background_opacity = self.config.scd_modified_fill_background_colour_opacity
+
             if boost_length == 2:
                 label_colour = self.config.scd_text_custom_label_colour
                 label_opacity = self.config.scd_text_custom_label_colour_opacity
                 boost_colour = self.config.scd_text_custom_modifier_colour
                 boost_opacity = self.config.scd_text_custom_modifier_colour_opacity
+                fill_background = self.config.scd_custom_fill_background_colour
+                fill_background_opacity = self.config.scd_custom_fill_background_colour_opacity
+
             if boost_length == 3:
                 label_colour = self.config.scd_text_experimental_label_colour
                 label_opacity = self.config.scd_text_experimental_label_colour_opacity
                 boost_colour = self.config.scd_text_experimental_modifier_colour
                 boost_opacity = self.config.scd_text_experimental_modifier_colour_opacity
+                fill_background = self.config.scd_experimental_fill_background_colour
+                fill_background_opacity = self.config.scd_experimental_fill_background_colour_opacity
+
             if boost_length == 4:
                 label_colour = self.config.scd_text_prototype_label_colour
                 label_opacity = self.config.scd_text_prototype_label_colour_opacity
                 boost_colour = self.config.scd_text_prototype_modifier_colour
                 boost_opacity = self.config.scd_text_prototype_modifier_colour_opacity
+                fill_background = self.config.scd_prototype_fill_background_colour
+                fill_background_opacity = self.config.scd_prototype_fill_background_colour_opacity
+
 
         # Boosts
         for boost in reFieldToList(boosts, "struct StatBoost *"):
@@ -1220,6 +1259,8 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_it
             "size": item_size,
             "label_colour": label_colour,
             "label_opacity": label_opacity,
+            "fill_background": fill_background,
+            "fill_background_opacity": fill_background_opacity,
         },
         "boosts": boosts_list,
     }
