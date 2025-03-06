@@ -847,65 +847,67 @@ class Plugin(PluginBase):
 
                     if (self.config.scd_equal_chest_display and total_displays > 1):
                         max_item_display = int(chest_length / total_displays)
+                    
+                    # Catch race condition issue with the chest id not appearing within the display_dict
+                    if game_object.objId in self.display_dict:
+                        for index, element in enumerate(self.display_dict[game_object.objId]):
+                            if (text_element_index >= max_item_display and display_index != total_displays - 1):
+                                displays.append(GraphicWindow(self.refs))
+                                display_index += 1
+                                displays[display_index].setFillRectColour(self.config.scd_display_background_colour)
+                                displays[display_index].setDrawRectColour(self.config.scd_display_border_colour)
+                                displays[display_index].setFillRectOpacity(self.config.scd_display_background_colour_opacity)
+                                displays[display_index].setDrawRectOpacity(self.config.scd_display_border_colour_opacity)
 
-                    for index, element in enumerate(self.display_dict[game_object.objId]):
-                        if (text_element_index >= max_item_display and display_index != total_displays - 1):
-                            displays.append(GraphicWindow(self.refs))
-                            display_index += 1
-                            displays[display_index].setFillRectColour(self.config.scd_display_background_colour)
-                            displays[display_index].setDrawRectColour(self.config.scd_display_border_colour)
-                            displays[display_index].setFillRectOpacity(self.config.scd_display_background_colour_opacity)
-                            displays[display_index].setDrawRectOpacity(self.config.scd_display_border_colour_opacity)
+                                text_element_index = 0
 
-                            text_element_index = 0
+                            if len(element["boosts"]) == 0:
+                                text_element_index += 1
 
-                        if len(element["boosts"]) == 0:
-                            text_element_index += 1
+                                displays[display_index].addLabel(
+                                    element["item"]["text"], 
+                                    1, 
+                                    self.config.scd_text_common_label_colour, 
+                                    self.config.scd_text_common_label_colour_opacity
+                                )
 
-                            displays[display_index].addLabel(
-                                element["item"]["text"], 
-                                1, 
-                                self.config.scd_text_common_label_colour, 
-                                self.config.scd_text_common_label_colour_opacity
-                            )
-
-                            # First check to see if we are not on the max display
-                            # Second, check to see if we are at the end of the display dict list
-                            if (display_index == total_displays - 1 and index != len(self.display_dict[game_object.objId]) - 1):
-                                displays[display_index].addPanelDivider() 
-                            elif text_element_index < max_item_display and index != len(self.display_dict[game_object.objId]) - 1: 
-                                displays[display_index].addPanelDivider() 
-                            
-                        else:
-                            panel_group_number += 1
-                            panel_group = PanelGroup(
-                                self.refs, displays[display_index], "pg" + str(panel_group_number)
-                            )
-                            panel_group.displayFillRect(self.config.scd_display_panel_group_background)
-                            panel_group.changeFillRectColour(element["item"]["fill_background"], element["item"]["fill_background_opacity"])
-                            
-                            text_element_index += 1
-                            panel_group.addLabel(
-                                element["item"]["text"],
-                                0,
-                                element["item"]["label_colour"],
-                                element["item"]["label_opacity"],
-                            )
-                            
-                            for boost_elements in element["boosts"]:
-                                text_element_index += 1 
+                                # First check to see if we are not on the max display
+                                # Second, check to see if we are at the end of the display dict list
+                                if (display_index == total_displays - 1 and index != len(self.display_dict[game_object.objId]) - 1):
+                                    displays[display_index].addPanelDivider() 
+                                elif text_element_index < max_item_display and index != len(self.display_dict[game_object.objId]) - 1: 
+                                    displays[display_index].addPanelDivider() 
+                                
+                            else:
+                                panel_group_number += 1
+                                panel_group = PanelGroup(
+                                    self.refs, displays[display_index], "pg" + str(panel_group_number)
+                                )
+                                panel_group.displayFillRect(self.config.scd_display_panel_group_background)
+                                panel_group.changeFillRectColour(element["item"]["fill_background"], element["item"]["fill_background_opacity"])
+                                
+                                text_element_index += 1
                                 panel_group.addLabel(
-                                    boost_elements["text"], 1, boost_elements["colour"], boost_elements["opacity"]
-                            )   
+                                    element["item"]["text"],
+                                    0,
+                                    element["item"]["label_colour"],
+                                    element["item"]["label_opacity"],
+                                )
+                                
+                                for boost_elements in element["boosts"]:
+                                    text_element_index += 1 
+                                    panel_group.addLabel(
+                                        boost_elements["text"], 1, boost_elements["colour"], boost_elements["opacity"]
+                                )   
 
-                            # First check to see if we are not on the max display
-                            # Second, check to see if we overflow on max display
-                            if (display_index == total_displays - 1 and index != len(self.display_dict[game_object.objId]) - 1):
-                                panel_group.addPanelDivider()
-                            elif text_element_index < max_item_display and index != len(self.display_dict[game_object.objId]) - 1: 
-                                panel_group.addPanelDivider()
+                                # First check to see if we are not on the max display
+                                # Second, check to see if we overflow on max display
+                                if (display_index == total_displays - 1 and index != len(self.display_dict[game_object.objId]) - 1):
+                                    panel_group.addPanelDivider()
+                                elif text_element_index < max_item_display and index != len(self.display_dict[game_object.objId]) - 1: 
+                                    panel_group.addPanelDivider()
 
-                            displays[display_index].addPanelGroup(panel_group)
+                                displays[display_index].addPanelGroup(panel_group)
 
                     for element in displays:
                         element.drawBorder()
@@ -1300,5 +1302,16 @@ def filter_boost(boost_list, boost_id, filters):
 
         if match:
             return boost
+       
+    logging.info("No boost match, please report boost_id and mod name to ryaaahs.")
+    logging.info("Boost ID: " + str(boost_id))
+    logging.info("Filters: " + str(filters))
 
-    return {}
+    return {
+        'id': -1, 
+        'name': 'NULL', 
+        'display_type': 0, 
+        'divide_value': 0, 
+        'class': ['NULL'], 
+        'slot': ['NULL']
+    }
