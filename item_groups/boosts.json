@@ -82,6 +82,14 @@
    },
    {
       "id":36,
+      "name":"Bombs",
+      "display_type":1,
+      "divide_value":0,
+      "class":"Wildfire",
+      "slot":"Secondary"
+   },
+   {
+      "id":36,
       "name":"Blasts",
       "display_type":1,
       "divide_value":0,
