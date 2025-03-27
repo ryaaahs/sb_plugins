@@ -13,7 +13,9 @@ scd_display_box = yes
 scd_display_container_background = yes
 scd_display_panel_group_background = no
 scd_equal_chest_display = yes
+# Compress items into individual columns (Works on mod pairs)
 scd_ec_uc_compress = no
+scd_item_compress = no
 # You can only have one filter on, default is remove if both are on
 scd_remove_filter = no
 scd_display_filter = no

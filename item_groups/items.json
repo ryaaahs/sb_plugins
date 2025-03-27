@@ -577,7 +577,7 @@
         "id": 193,
         "name": "Needlebow",
         "id_name": "loot-nbow",
-        "class": "Wildfire_Duskwing",
+        "class": ["Wildfire", "Duskwing"],
         "slot": "Main"
     },
     {
@@ -633,7 +633,7 @@
         "id": 188,
         "name": "Bandolier",
         "id_name": "loot-band",
-        "class": "Wildfire_Duskwing_Ironclad",
+        "class": ["Wildfire", "Duskwing", "Ironclad"],
         "slot": "Body"
     },
     {

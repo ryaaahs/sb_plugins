@@ -82,6 +82,30 @@
    },
    {
       "id":36,
+      "name":"Plinks",
+      "display_type":1,
+      "divide_value":0,
+      "class":"Ironclad",
+      "slot":"Main"
+   },
+   {
+      "id":36,
+      "name":"Height",
+      "display_type":1,
+      "divide_value":0,
+      "class":"Ironclad",
+      "slot":"Main"
+   },
+   {
+      "id":36,
+      "name":"Missiles",
+      "display_type":1,
+      "divide_value":0,
+      "class":"Ironclad",
+      "slot":"Secondary"
+   },
+   {
+      "id":36,
       "name":"Bombs",
       "display_type":1,
       "divide_value":0,
@@ -381,7 +405,7 @@
       ],
       "slot":[
          "Main",
-		 "Special"
+		   "Special"
       ]
    },
    {
@@ -421,24 +445,13 @@
       "divide_value":0,
       "class":[
          "Duskwing",
-         "Ironclad"
+         "Ironclad",
+         "Fabricator"
       ],
       "slot":[
          "Main",
          "Secondary",
          "Special"
-      ]
-   },
-   {
-      "id":38,
-      "name":"Lifetime",
-      "display_type":1,
-      "divide_value":0,
-      "class":[
-         "Fabricator"
-      ],
-      "slot":[
-         "Secondary"
       ]
    },
    {
@@ -504,5 +517,21 @@
       "divide_value":0,
       "class":"Fabricator",
       "slot":"Special"
+   },
+   {
+      "id":46,
+      "name":"Burns",
+      "display_type":1,
+      "divide_value":0,
+      "class":"Ironclad",
+      "slot":"Secondary"
+   },
+   {
+      "id":49,
+      "name":"Gravity",
+      "display_type":6,
+      "divide_value":0,
+      "class":"Fabricator",
+      "slot":"Mobility"
    }
 ]

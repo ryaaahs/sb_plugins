@@ -519,6 +519,7 @@ class Plugin(PluginBase):
                 "scd_display_container_background": True,
                 "scd_display_panel_group_background": False,
                 "scd_ec_uc_compress": False,
+                "scd_item_compress": False,
                 "scd_remove_filter": False,
                 "scd_display_filter": False,
                 "scd_disable_on_walk_over": False,
@@ -653,7 +654,7 @@ class Plugin(PluginBase):
                                                 
                                             if (item_boosts_names_copy == []):
                                                 matched_item = True
-                                                break;
+                                                break
                                     
                                     if (matched_item):
                                         matched_item = False
@@ -693,7 +694,7 @@ class Plugin(PluginBase):
                                                     
                                                 if (item_boosts_names_copy == []):
                                                     matched_item = True
-                                                    break;
+                                                    break
                                         
                                         if (matched_item):
                                             matched_item = False
@@ -737,8 +738,48 @@ class Plugin(PluginBase):
                                 perf_item_match
                             )
 
-                            chest_length += len(boosts) + 1 if len(boosts) > 0 else 1
-                            self.display_dict[game_object.objId].append(item_display_name)
+                            # Determine if the item exists and we need to compress
+                            # Given we are storing the contents within a readable format, we need to check after we transform the infomation
+                            if (self.config.scd_item_compress):
+                                
+                                item_exists = False
+                                item_boosts = {}
+
+                                for boost in item_display_name["boosts"]:
+                                    if boost["text"] in item_boosts:
+                                        item_boosts[boost["text"]] += 1
+                                    else:
+                                        item_boosts[boost["text"]] = 1
+
+                                for chest_items in self.display_dict[game_object.objId]:
+                                    if (item_display_name["item"]["text"] == chest_items["item"]["text"]):
+                                        # If they have empty arrays, increment the counter instead of adding it to display
+                                        if (len(item_display_name["boosts"]) == 0 and len(chest_items["boosts"]) == 0):
+                                            chest_items["item"]["amount"] += 1
+                                            item_exists = True
+                                            break
+                                        elif (len(item_display_name["boosts"]) == len(chest_items["boosts"])):
+                                            # Compare the boosts between the items
+                                            match = {}
+                                            for chest_item_boosts in chest_items["boosts"]:
+                                                if chest_item_boosts["text"] in match:
+                                                    match[chest_item_boosts["text"]] += 1
+                                                else:
+                                                    match[chest_item_boosts["text"]] = 1
+
+                                                logging.info(item_boosts)
+                                                logging.info(match)
+                                            if item_boosts == match:
+                                                chest_items["item"]["amount"] += 1
+                                                item_exists = True
+                                                break
+
+                                if (not item_exists):
+                                    chest_length += len(boosts) + 1 if len(boosts) > 0 else 1
+                                    self.display_dict[game_object.objId].append(item_display_name)
+                            else:
+                                chest_length += len(boosts) + 1 if len(boosts) > 0 else 1
+                                self.display_dict[game_object.objId].append(item_display_name)
 
                         self.current_floor_chests_ids.append(game_object.objId)
                         
@@ -864,13 +905,21 @@ class Plugin(PluginBase):
                             if len(element["boosts"]) == 0:
                                 text_element_index += 1
 
-                                displays[display_index].addLabel(
-                                    element["item"]["text"], 
-                                    1, 
-                                    self.config.scd_text_common_label_colour, 
-                                    self.config.scd_text_common_label_colour_opacity
-                                )
-
+                                if (element["item"]["amount"] == 1):
+                                    displays[display_index].addLabel(
+                                        element["item"]["text"], 
+                                        1, 
+                                        self.config.scd_text_common_label_colour, 
+                                        self.config.scd_text_common_label_colour_opacity
+                                    )
+                                else:
+                                    displays[display_index].addLabel(
+                                        str(element["item"]["amount"]) + " " + element["item"]["text"],
+                                        1, 
+                                        self.config.scd_text_common_label_colour, 
+                                        self.config.scd_text_common_label_colour_opacity
+                                    )
+                                
                                 # First check to see if we are not on the max display
                                 # Second, check to see if we are at the end of the display dict list
                                 if (display_index == total_displays - 1 and index != len(self.display_dict[game_object.objId]) - 1):
@@ -887,12 +936,20 @@ class Plugin(PluginBase):
                                 panel_group.changeFillRectColour(element["item"]["fill_background"], element["item"]["fill_background_opacity"])
                                 
                                 text_element_index += 1
-                                panel_group.addLabel(
-                                    element["item"]["text"],
-                                    0,
-                                    element["item"]["label_colour"],
-                                    element["item"]["label_opacity"],
-                                )
+                                if (element["item"]["amount"] == 1):
+                                    panel_group.addLabel(
+                                        element["item"]["text"],
+                                        0,
+                                        element["item"]["label_colour"],
+                                        element["item"]["label_opacity"],
+                                    )
+                                else:
+                                    panel_group.addLabel(
+                                        str(element["item"]["amount"]) + " " + element["item"]["text"],
+                                        0,
+                                        element["item"]["label_colour"],
+                                        element["item"]["label_opacity"],
+                                    )
                                 
                                 for boost_elements in element["boosts"]:
                                     text_element_index += 1 
@@ -1127,6 +1184,7 @@ def addPlainToLoggingDisplay(self, string):
     return {
         "item": {
             "text": string,
+            "amount": 1,
             "size": self.config.scd_text_display_size,
             "label_colour": "ffffff",
             "label_opacity": 255,
@@ -1195,6 +1253,7 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_it
             text = ""
             item_filtered_boost = ""
 
+            # TODO Figure out why I needed to define the raw boost values than using loot_item.get..
             if boost.stat == 43:
                 if boost.val == 100:
                     filters = {
@@ -1211,9 +1270,25 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_it
                     }
 
                 item_filtered_boost = filter_boost(self.boost_list, boost.stat, filters)
-
                 text += item_filtered_boost["name"]
 
+            elif ((loot_item.get("class") == "Ironclad" and loot_item.get("slot") == "Main") and boost.stat == 36):
+                if loot_item.get(name) == "Preceptor":
+                    filters = {
+                        "name": "Height",
+                        "class": loot_item.get("class"),
+                        "slot": loot_item.get("slot"),
+                    }
+
+                else:
+                    filters = {
+                        "name": "Plinks",
+                        "class": loot_item.get("class"),
+                        "slot": loot_item.get("slot"),
+                    }
+
+                    item_filtered_boost = filter_boost(self.boost_list, boost.stat, filters)
+                    text += item_filtered_boost["name"]
             else:
                 filters = {
                     "class": loot_item.get("class"),
@@ -1221,7 +1296,6 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_it
                 }
 
                 item_filtered_boost = filter_boost(self.boost_list, boost.stat, filters)
-
                 text += item_filtered_boost["name"]
 
             if item_filtered_boost["display_type"] == 1:
@@ -1244,8 +1318,11 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_it
             elif item_filtered_boost["display_type"] == 4:
                 text += ": " + str(boost.val)
 
-            elif item_filtered_boost["divide_value"] == 5:
+            elif item_filtered_boost["display_type"] == 5:
                 text += ": +" + str(boost.val) + "HP"
+
+            elif item_filtered_boost["display_type"] == 6:
+                text += ": -" + str(value) + "%"
 
             boost_display = {}
             boost_display["size"] = self.config.scd_text_display_size
@@ -1259,6 +1336,7 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_it
         "item": {
             "text": item_text,
             "size": item_size,
+            "amount": 1,
             "label_colour": label_colour,
             "label_opacity": label_opacity,
             "fill_background": fill_background,
@@ -1302,8 +1380,8 @@ def filter_boost(boost_list, boost_id, filters):
 
         if match:
             return boost
-       
-    logging.info("No boost match, please report boost_id and mod name to ryaaahs.")
+        
+    logging.info("No boost match. Report information below to Plugin Developer")
     logging.info("Boost ID: " + str(boost_id))
     logging.info("Filters: " + str(filters))
 

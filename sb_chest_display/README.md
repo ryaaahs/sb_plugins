@@ -24,8 +24,7 @@ Iterate through the collected items and create labels with the assoicated colour
 Once all the graphics are done, display it depending on the worlds x min and x max.  
 
 # Usage
-Get the files from here:  
-https://github.com/ryaaahs/sb_plugins/releases/tag/sb_chest_display_release_1.0.1  
+Get the files from the latest release
 
 You would want the Source code (zip)  
 The files you need from this zip folder are the following:  
