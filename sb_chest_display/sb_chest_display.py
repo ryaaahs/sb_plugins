@@ -540,6 +540,7 @@ class Plugin(PluginBase):
         self.longest_name_dict = {}
         self.chest_length_dict = {}
         self.current_floor_chests_ids = []
+        self.floor = ""
         
         # Load the json items
         with open(ITEMS_JSON, "r") as items:
@@ -559,6 +560,8 @@ class Plugin(PluginBase):
 
         if client_world == ffi.NULL or world_view == ffi.NULL:
             return
+        
+        cleint_world_props = client_world.asWorld.props
 
         zone = util.getstr(client_world.asWorld.props.zone) or util.getstr(
             client_world.asWorld.props.music
@@ -569,6 +572,19 @@ class Plugin(PluginBase):
                 self.new_subworld = True
                 self.is_home = False
 
+            if (self.floor == "" or floor != cleint_world_props.floor):
+                # Reset variable tracking on floor change
+                self.display_dict = {}
+                self.ec_dict = {}
+                self.uc_dict = {}
+                self.longest_name = ""
+                self.longest_boost_name = ""
+                self.longest_boost_name_dict = {}
+                self.longest_name_dict = {}
+                self.chest_length_dict = {}
+                self.current_floor_chests_ids = []
+                floor = cleint_world_props.floor
+            
             for game_object in util.worldobjects(
                 client_world.mySubWorld.asNativeSubWorld
             ):
@@ -766,9 +782,6 @@ class Plugin(PluginBase):
                                                     match[chest_item_boosts["text"]] += 1
                                                 else:
                                                     match[chest_item_boosts["text"]] = 1
-
-                                                logging.info(item_boosts)
-                                                logging.info(match)
                                             if item_boosts == match:
                                                 chest_items["item"]["amount"] += 1
                                                 item_exists = True
@@ -802,9 +815,17 @@ class Plugin(PluginBase):
                 self.is_home = True
                 self.new_subworld = False
 
+                # Reset variable tracking on home
                 self.display_dict = {}
+                self.ec_dict = {}
+                self.uc_dict = {}
+                self.longest_name = ""
+                self.longest_boost_name = ""
+                self.longest_boost_name_dict = {}
+                self.longest_name_dict = {}
                 self.chest_length_dict = {}
-                self.total_boosts_dict = {}
+                self.current_floor_chests_ids = []
+                self.floor = ""
 
         self.draw = True
 
@@ -1253,7 +1274,7 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_it
             text = ""
             item_filtered_boost = ""
 
-            # TODO Figure out why I needed to define the raw boost values than using loot_item.get..
+            # TODO Figure out why I needed to define the raw boost values without a comment
             if boost.stat == 43:
                 if boost.val == 100:
                     filters = {
@@ -1381,7 +1402,7 @@ def filter_boost(boost_list, boost_id, filters):
         if match:
             return boost
         
-    logging.info("No boost match. Report information below to Plugin Developer")
+    logging.info("No boost match. Report below information to Plugin Developer")
     logging.info("Boost ID: " + str(boost_id))
     logging.info("Filters: " + str(filters))
 
