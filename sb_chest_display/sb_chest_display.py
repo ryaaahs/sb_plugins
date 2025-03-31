@@ -1,11 +1,13 @@
 import logging
 import os
 import json
+import util
 
 from enum import Enum
+from collections import Counter
 from _remote import ffi, lib
 from manager import PluginBase
-import util
+
 
 DEBUG_MODE = False
 
@@ -101,7 +103,7 @@ perf_tracking = [
     # Format
     # {"name": "Jansky Repeater", "variant": "DPS", "tracking": True, "modifiers": ["Shots", "Armor Piercing", "Penetrating", "Explosive Ammo"]},
     # {"name": "Jansky Repeater", "variant": "COMB", "tracking": True, "modifiers": ["Shots", "Range", "Penetrating", "Explosive Ammo"]},
-    # {"name": "Jansky Repeater", "variant": "Range", "tracking": True, "modifiers": ["Shots", "Armor Piercing", "Penetrating", "Range"]},
+    {"name": "Kantikoy Repeater", "variant": "Range", "tracking": True, "modifiers": ["Shots", "Armor Piercing"]},
 ]
 
 class Graphic:
@@ -167,7 +169,7 @@ class Graphic:
         if (self.display_fill_rect):
             self.refs.XDL_FillRect(
                 self.x, self.y, self.w, self.h, 
-                str_colour_to_hex(
+                strcColourToHex(
                     self.fill_rect_colour, 
                     self.fill_rect_opacity
                 ), 
@@ -186,7 +188,7 @@ class Graphic:
             test.draw(x, y, anchorX=0.5, anchorY=0.5)
 
         self.refs.XDL_DrawRect(x, y, w, h, 
-            str_colour_to_hex(
+            strcColourToHex(
                 self.draw_rect_colour, 
                 self.draw_rect_opacity
             ), 
@@ -611,6 +613,7 @@ class Plugin(PluginBase):
                             item_name = loot_item.get("name")
                             item_boosts_names = []
                             perf_item_match = False
+                            perf_item_variant_name = ""
 
                             # Collect the boosts names to be used within filters
                             for boost in reFieldToList(item.statboosts, "struct StatBoost *"):
@@ -618,22 +621,19 @@ class Plugin(PluginBase):
                                     "class": loot_item.get("class"),
                                     "slot": loot_item.get("slot"),
                                 }
-                                item_filtered_boost = filter_boost(self.boost_list, boost.stat, filters)
+                                item_filtered_boost = filterBoost(self.boost_list, boost.stat, filters)
                                 item_boosts_names.append(item_filtered_boost["name"])
 
                             # Check for PERF items
                             for perf_item in perf_tracking:
-                                item_boosts_names_copy = item_boosts_names
-                                
-                                if (item_name == perf_item["name"] and len(perf_item["modifiers"]) == len(item_boosts_names) and perf_item['tracking']):
-                                    for boost in perf_item["modifiers"]:
-                                        if boost in item_boosts_names:
-                                            item_boosts_names_copy.remove(boost)
-                                        else: 
-                                            break
-                                        # We have a match!
-                                        perf_item_match = True
-                                        item_name = perf_item["variant"] + " " + loot_item.get("name")
+                                if (
+                                    item_name == perf_item["name"]
+                                    and Counter(perf_item["modifiers"]) == Counter(item_boosts_names)
+                                    and perf_item["tracking"]
+                                ):
+                                    # We have a match!
+                                    perf_item_match = True
+                                    perf_item_variant_name = perf_item["variant"]
                                         
                             if (self.config.scd_remove_filter):
                                 wildcard_filter_list = []
@@ -659,16 +659,7 @@ class Plugin(PluginBase):
                                     matched_item = False
 
                                     for filter_item in remove_filter_list:
-                                        item_boosts_names_copy = item_boosts_names
-                                        
-                                        if (item_name == filter_item["name"] and len(filter_item["modifiers"]) == len(item_boosts_names)):
-                                            for boost in filter_item["modifiers"]:
-                                                if boost in item_boosts_names:
-                                                    item_boosts_names_copy.remove(boost)
-                                                else: 
-                                                    break
-                                                
-                                            if (item_boosts_names_copy == []):
+                                        if (item_name == filter_item["name"] and Counter(filter_item["modifiers"]) == Counter(item_boosts_names)):
                                                 matched_item = True
                                                 break
                                     
@@ -698,19 +689,10 @@ class Plugin(PluginBase):
                                     if (len(item_boosts_names) > 0):
                                         matched_item = False
 
-                                        for filter_item in display_filter_list:
-                                            item_boosts_names_copy = item_boosts_names
-                                            
-                                            if (item_name == filter_item["name"] and len(filter_item["modifiers"]) == len(item_boosts_names)):
-                                                for boost in filter_item["modifiers"]:
-                                                    if boost in item_boosts_names:
-                                                        item_boosts_names_copy.remove(boost)
-                                                    else: 
-                                                        break
-                                                    
-                                                if (item_boosts_names_copy == []):
-                                                    matched_item = True
-                                                    break
+                                        for filter_item in display_filter_list:                                            
+                                            if (item_name == filter_item["name"] and Counter(filter_item["modifiers"]) == Counter(item_boosts_names)):
+                                                matched_item = True
+                                                break
                                         
                                         if (matched_item):
                                             matched_item = False
@@ -737,7 +719,7 @@ class Plugin(PluginBase):
                             )
 
                             if perf_item_match: 
-                                logging_name = item_name
+                                logging_name = perf_item_variant_name + " " + item_name
                             else: 
                                 logging_name = (
                                     ITEM_MODS[len(boosts)] + " " + loot_item.get("name")
@@ -757,35 +739,29 @@ class Plugin(PluginBase):
                             # Determine if the item exists and we need to compress
                             # Given we are storing the contents within a readable format, we need to check after we transform the infomation
                             if (self.config.scd_item_compress):
-                                
                                 item_exists = False
-                                item_boosts = {}
 
+                                item_boosts = []
                                 for boost in item_display_name["boosts"]:
-                                    if boost["text"] in item_boosts:
-                                        item_boosts[boost["text"]] += 1
-                                    else:
-                                        item_boosts[boost["text"]] = 1
-
+                                    item_boosts.append(boost["text"])
+                                    
                                 for chest_items in self.display_dict[game_object.objId]:
                                     if (item_display_name["item"]["text"] == chest_items["item"]["text"]):
+                                        
+                                        chest_boosts = []
+                                        for boost in chest_items["boosts"]:
+                                            chest_boosts.append(boost["text"])
+
                                         # If they have empty arrays, increment the counter instead of adding it to display
-                                        if (len(item_display_name["boosts"]) == 0 and len(chest_items["boosts"]) == 0):
+                                        if (len(item_boosts) == 0 and len(chest_boosts) == 0):
                                             chest_items["item"]["amount"] += 1
                                             item_exists = True
                                             break
-                                        elif (len(item_display_name["boosts"]) == len(chest_items["boosts"])):
+                                        elif (Counter(item_boosts) == Counter(chest_boosts)):
                                             # Compare the boosts between the items
-                                            match = {}
-                                            for chest_item_boosts in chest_items["boosts"]:
-                                                if chest_item_boosts["text"] in match:
-                                                    match[chest_item_boosts["text"]] += 1
-                                                else:
-                                                    match[chest_item_boosts["text"]] = 1
-                                            if item_boosts == match:
-                                                chest_items["item"]["amount"] += 1
-                                                item_exists = True
-                                                break
+                                            chest_items["item"]["amount"] += 1
+                                            item_exists = True
+                                            break
 
                                 if (not item_exists):
                                     chest_length += len(boosts) + 1 if len(boosts) > 0 else 1
@@ -1244,7 +1220,7 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_it
                 fill_background = self.config.scd_modified_fill_background_colour
                 fill_background_opacity = self.config.scd_modified_fill_background_colour_opacity
 
-            if boost_length == 2:
+            elif boost_length == 2:
                 label_colour = self.config.scd_text_custom_label_colour
                 label_opacity = self.config.scd_text_custom_label_colour_opacity
                 boost_colour = self.config.scd_text_custom_modifier_colour
@@ -1252,7 +1228,7 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_it
                 fill_background = self.config.scd_custom_fill_background_colour
                 fill_background_opacity = self.config.scd_custom_fill_background_colour_opacity
 
-            if boost_length == 3:
+            elif boost_length == 3:
                 label_colour = self.config.scd_text_experimental_label_colour
                 label_opacity = self.config.scd_text_experimental_label_colour_opacity
                 boost_colour = self.config.scd_text_experimental_modifier_colour
@@ -1260,14 +1236,13 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_it
                 fill_background = self.config.scd_experimental_fill_background_colour
                 fill_background_opacity = self.config.scd_experimental_fill_background_colour_opacity
 
-            if boost_length == 4:
+            elif boost_length == 4:
                 label_colour = self.config.scd_text_prototype_label_colour
                 label_opacity = self.config.scd_text_prototype_label_colour_opacity
                 boost_colour = self.config.scd_text_prototype_modifier_colour
                 boost_opacity = self.config.scd_text_prototype_modifier_colour_opacity
                 fill_background = self.config.scd_prototype_fill_background_colour
                 fill_background_opacity = self.config.scd_prototype_fill_background_colour_opacity
-
 
         # Boosts
         for boost in reFieldToList(boosts, "struct StatBoost *"):
@@ -1290,25 +1265,24 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_it
                         "slot": loot_item.get("slot"),
                     }
 
-                item_filtered_boost = filter_boost(self.boost_list, boost.stat, filters)
+                item_filtered_boost = filterBoost(self.boost_list, boost.stat, filters)
                 text += item_filtered_boost["name"]
 
-            elif ((loot_item.get("class") == "Ironclad" and loot_item.get("slot") == "Main") and boost.stat == 36):
-                if loot_item.get(name) == "Preceptor":
+            elif (loot_item.get("class") == "Ironclad" and boost.stat == 36):
+                if boost.val == 1:
                     filters = {
                         "name": "Height",
                         "class": loot_item.get("class"),
                         "slot": loot_item.get("slot"),
                     }
-
-                else:
+                elif boost.val == 2:
                     filters = {
                         "name": "Plinks",
                         "class": loot_item.get("class"),
                         "slot": loot_item.get("slot"),
                     }
 
-                    item_filtered_boost = filter_boost(self.boost_list, boost.stat, filters)
+                    item_filtered_boost = filterBoost(self.boost_list, boost.stat, filters)
                     text += item_filtered_boost["name"]
             else:
                 filters = {
@@ -1316,7 +1290,7 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_it
                     "slot": loot_item.get("slot"),
                 }
 
-                item_filtered_boost = filter_boost(self.boost_list, boost.stat, filters)
+                item_filtered_boost = filterBoost(self.boost_list, boost.stat, filters)
                 text += item_filtered_boost["name"]
 
             if item_filtered_boost["display_type"] == 1:
@@ -1367,7 +1341,7 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_it
     }
 
 
-def str_colour_to_hex(colour, opacity):
+def strcColourToHex(colour, opacity):
     # Check opacity bounds
     if (opacity < 0 or opacity > 255): 
         opacity = 255
@@ -1375,7 +1349,7 @@ def str_colour_to_hex(colour, opacity):
     return int(hex(opacity) + colour, 16)
 
 
-def filter_boost(boost_list, boost_id, filters):
+def filterBoost(boost_list, boost_id, filters):
     for boost in boost_list:
         if boost.get("id") != boost_id:
             # Skip boosts that do not match the specified boost_id
