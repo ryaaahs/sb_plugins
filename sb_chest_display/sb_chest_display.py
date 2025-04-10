@@ -1268,7 +1268,7 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_it
                 item_filtered_boost = filterBoost(self.boost_list, boost.stat, filters)
                 text += item_filtered_boost["name"]
 
-            elif (loot_item.get("class") == "Ironclad" and boost.stat == 36):
+            elif ((loot_item.get("class") == "Ironclad" and loot_item.get("slot") == "Main") and boost.stat == 36):
                 if boost.val == 1:
                     filters = {
                         "name": "Height",
@@ -1385,6 +1385,6 @@ def filterBoost(boost_list, boost_id, filters):
         'name': 'NULL', 
         'display_type': 0, 
         'divide_value': 0, 
-        'class': ['NULL'], 
+        'class': ['NULL'],
         'slot': ['NULL']
     }
