@@ -1317,7 +1317,7 @@ def addItemToLoggingDisplay(self, loot_item, name, boost_length, boosts, perf_it
                 text += ": +" + str(boost.val) + "HP"
 
             elif item_filtered_boost["display_type"] == 6:
-                text += ": -" + str(value) + "%"
+                text += ": -" + str(boost.val) + "%"
 
             boost_display = {}
             boost_display["size"] = self.config.scd_text_display_size
