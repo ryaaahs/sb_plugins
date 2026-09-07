@@ -1274,6 +1274,20 @@
         "slot": "Mobility"
     },
     {
+        "id": 62,
+        "name": "Teleport Throw",
+        "id_name": "loot-teleportthrow",
+        "class": "Toaster",
+        "slot": "Special"
+    },
+    {
+        "id": 64,
+        "name": "Star",
+        "id_name": "loot-star",
+        "class": "Toaster",
+        "slot": "Secondary"
+    },
+    {
         "id": 18,
         "name": "Health Boost 1",
         "id_name": "loot-health1",
