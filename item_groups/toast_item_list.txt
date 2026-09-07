@@ -1,0 +1,5 @@
+SECOND
+64|Star|loot-star
+
+SPECIAL
+62|Teleport Throw|loot-teleportthrow
